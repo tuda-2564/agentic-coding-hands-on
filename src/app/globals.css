@@ -8,19 +8,56 @@
 @theme inline {
 	--color-background: var(--background);
 	--color-foreground: var(--foreground);
-	--font-sans: var(--font-geist-sans);
-	--font-mono: var(--font-geist-mono);
+	--font-sans: var(--font-montserrat);
+	--font-alt: var(--font-montserrat-alt);
+	--font-digital: var(--font-digital);
+
+	/* Homepage SAA tokens */
+	--color-navy: #00101A;
+	--color-surface-dark: #001520;
+	--color-surface-card: #0A1E2B;
+	--color-gold: #C8A96E;
+	--color-gold-light: #E8D5A8;
+	--color-gold-gradient-start: #F5D98E;
+	--color-gold-gradient-end: #A67C3D;
+	--color-countdown-bg: rgba(26, 42, 58, 0.9);
+	--color-kudos-orange: #FF6B35;
+	--color-footer-bg: #000D14;
+
+	--animate-fade-in: fade-in 500ms ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-	:root {
-		--background: #0a0a0a;
-		--foreground: #ededed;
-	}
+html {
+	scroll-behavior: smooth;
+	scroll-padding-top: 64px;
 }
 
 body {
 	background: var(--background);
 	color: var(--foreground);
-	font-family: Arial, Helvetica, sans-serif;
+	font-family: var(--font-sans);
+}
+
+/* Global focus style for accessibility (T054) */
+:focus-visible {
+	outline: 2px solid #C8A96E;
+	outline-offset: 2px;
+}
+
+@keyframes fade-in {
+	0% {
+		opacity: 0;
+	}
+	100% {
+		opacity: 1;
+	}
+}
+
+@keyframes shimmer {
+	0% {
+		background-position: 200% 0;
+	}
+	100% {
+		background-position: -200% 0;
+	}
 }

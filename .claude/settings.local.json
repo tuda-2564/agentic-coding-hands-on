@@ -1,0 +1,33 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__momorph__get_frame",
+      "mcp__momorph__get_frame_image",
+      "mcp__momorph__get_media_files",
+      "mcp__momorph__get_design_item_image",
+      "mcp__momorph__list_frame_styles",
+      "mcp__momorph__list_design_items",
+      "mcp__momorph__get_frame_node_tree",
+      "mcp__momorph__list_frames",
+      "Bash(curl:*)",
+      "Bash(yarn tsc --noEmit)",
+      "Bash(yarn lint)",
+      "Bash(yarn build)",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_wait_for",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_press_key",
+      "Bash(npx vitest run src/utils/__tests__/)",
+      "Bash(npx vitest run)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(yarn test --run)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "context7",
+    "momorph",
+    "playwright",
+    "testViewpoints"
+  ]
+}
