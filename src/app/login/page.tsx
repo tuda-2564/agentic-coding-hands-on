@@ -24,20 +24,21 @@ export default async function LoginPage({
   const { error } = await searchParams;
 
   return (
-    <main className="relative min-h-screen bg-[#00101A] overflow-hidden">
+    <main className="relative flex flex-col min-h-screen bg-navy overflow-x-hidden">
       {/* C_Keyvisual — full-bleed background artwork */}
       <Image
-        src="/images/keyvisual-bg.svg"
+        src="/images/prelaunch-bg.png"
         alt=""
         fill
         className="object-cover object-center"
         style={{ zIndex: 0 }}
         priority
+        sizes="100vw"
         aria-hidden="true"
       />
       {/* Left horizontal gradient overlay */}
       <div
-        className="absolute inset-0 z-[1] pointer-events-none"
+        className="absolute inset-0 z-1 pointer-events-none"
         style={{
           background:
             "linear-gradient(90deg, #00101A 0%, #00101A 25.41%, rgba(0,16,26,0) 100%)",
@@ -46,7 +47,7 @@ export default async function LoginPage({
       />
       {/* Bottom vertical gradient overlay */}
       <div
-        className="absolute bottom-0 left-0 right-0 z-[1] pointer-events-none"
+        className="absolute bottom-0 left-0 right-0 z-1 pointer-events-none"
         style={{
           top: "138px",
           background:

@@ -21,7 +21,18 @@
       "Bash(npx vitest run src/utils/__tests__/)",
       "Bash(npx vitest run)",
       "Bash(npx tsc --noEmit)",
-      "Bash(yarn test --run)"
+      "Bash(yarn test --run)",
+      "Bash(for t:*)",
+      "Bash(do sed:*)",
+      "Bash(done)",
+      "Bash(npm run:*)",
+      "Bash(npx supabase:*)",
+      "Bash(supabase --version)",
+      "Bash(npx next:*)",
+      "mcp__playwright__browser_resize",
+      "Bash(npx vitest:*)",
+      "mcp__momorph__list_media_items",
+      "mcp__momorph__get_media_file"
     ]
   },
   "enabledMcpjsonServers": [

@@ -8,8 +8,8 @@ type HeroSectionProps = {
 
 export default function HeroSection({ initialError }: HeroSectionProps) {
   return (
-    <section className="absolute top-[88px] w-full px-4 md:px-12 lg:px-36 py-16 md:py-20 lg:py-24">
-      <div className="flex flex-col gap-10 md:gap-16 lg:gap-30 items-start w-full lg:w-[1152px]">
+    <section className="relative z-2 flex-1 w-full px-4 md:px-12 lg:px-36 pt-32 md:pt-36 lg:pt-40 pb-16 md:pb-20 lg:pb-24">
+      <div className="flex flex-col gap-10 md:gap-16 lg:gap-20 items-start w-full lg:w-[1152px]">
         {/* B.1 Key Visual — ROOT FURTHER logo */}
         <Image
           src="/images/root-further.png"

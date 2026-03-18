@@ -1,7 +1,7 @@
 # Tasks: Login
 
 **Frame**: `662-14387-Login`
-**Prerequisites**: plan.md ✅ | spec.md ✅ | design-style.md ✅
+**Prerequisites**: plan.md ✅, spec.md ✅, design-style.md ✅
 
 ---
 
@@ -17,109 +17,144 @@
 
 ---
 
-## Phase 1: Setup (Assets + Test Infrastructure)
+## Phase 1: Setup (Environment & Infrastructure)
 
-**Purpose**: Download all UI assets from MoMorph and configure the test runner before any code is written.
+**Purpose**: Supabase Auth environment configuration required for any auth testing
 
-- [x] T001 Install Vitest dev dependencies *(blocked: Node 16 incompatible with Vitest 2+/4+; skipped per user decision)* | package.json
-- [x] T002 [P] Create Vitest config *(skipped — no test runner)* | vitest.config.ts
-- [x] T003 [P] Create test setup file *(skipped — no test runner)* | src/test/setup.ts
-- [x] T004 [P] Add test scripts to package.json *(skipped — no test runner)* | package.json
-- [x] T005 [P] Download SAA 2025 logo from MoMorph (node `I662:14391;178:1033;178:1030`) | public/images/saa-logo.png
-- [x] T006 [P] Download ROOT FURTHER key visual from MoMorph (node `2939:9548`) | public/images/root-further.png
-- [x] T007 [P] Download background artwork *(node `662:14389` returns 404 — CSS fallback `bg-[#00101A]` used)* | —
-- [x] T008 [P] Download Google OAuth icon from MoMorph (node `I662:14426;186:1766`) | public/icons/google.svg
-- [x] T009 [P] Download Vietnamese flag icon from MoMorph (node `I662:14391;186:1696;186:1821;186:1709`) | public/icons/flag-vn.svg
-- [x] T010 [P] Download ChevronDown icon from MoMorph (node `I662:14391;186:1696;186:1821;186:1441`) | public/icons/chevron-down.svg
+- [ ] T001 Start Docker Desktop and run `supabase start` to launch local Supabase dev stack
+- [ ] T002 Create `.env.local` with Google OAuth credentials (`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`) + Supabase keys from `supabase status` output (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `NEXT_PUBLIC_APP_URL`) — see plan.md "Supabase Auth Setup" section C
+- [ ] T003 Verify `yarn dev` loads the login page at `http://localhost:3000/login` without errors
 
-**Checkpoint**: ✅ 5/6 assets downloaded; test runner skipped (Node 16 incompatibility)
+**Checkpoint**: Local development environment running with Supabase Auth + Google OAuth configured
 
 ---
 
-## Phase 2: Foundation (Blocking Prerequisites)
+## Phase 2: Foundation (Bug Fixes — Blocking)
 
-**Purpose**: Font loading, shared types, session middleware, and OAuth callback route — everything P1 and P2 depend on.
+**Purpose**: Fix 2 spec-violating bugs before user story verification or testing can begin
 
-**⚠️ CRITICAL**: No user story work can begin until this phase is complete.
+**⚠️ CRITICAL**: These fixes MUST be completed before Phase 3+ because tests would encode wrong behavior otherwise
 
-### Fonts & Globals
+- [x] T004 Fix short viewport scroll: change `overflow-hidden` to `overflow-x-hidden` on `<main>` element in `src/app/login/page.tsx` (line 27). This allows vertical scroll while still clipping horizontal gradient bleed.
+- [x] T005 Fix footer positioning: change login variant in `src/components/footer/footer.tsx` from `absolute bottom-0` to flow-based layout. Use a flex column layout on `<main>` with `min-h-screen` + `flex-1` on hero section so footer stays at bottom when content is short but scrolls naturally when viewport is short. Verify at 360×500px viewport — page scrolls, footer visible below hero.
+- [x] T006 Fix hero section positioning: update `src/components/login/hero-section.tsx` from `absolute top-[88px]` to relative/flex positioning that works with the new flex column layout from T005. Ensure `pt-[88px]` or equivalent accounts for fixed header height.
+- [x] T007 Verify responsive layout after T004–T006: check login page at 360px, 768px, 1440px viewports + 360×500px short viewport — no overflow, no broken images, footer visible after scroll.
 
-- [x] T011 [P] Update layout: add `Montserrat` + `Montserrat_Alternates` via `next/font/google`; set `<html lang="vi">` | src/app/layout.tsx
-- [x] T012 [P] Update globals: add `--font-sans`/`--font-alt` @theme vars; set `font-family: var(--font-sans)` on body | src/app/globals.css
+- [x] T024 Fix background artwork: replace placeholder `keyvisual-bg.svg` (414-byte dark gradient) with `prelaunch-bg.png` (the real colorful swirling artwork) in `src/app/login/page.tsx`. Matches Figma C_Keyvisual node 662:14388. | `src/app/login/page.tsx`
+- [x] T025 Fix footer text alignment: change login variant footer from `justify-center lg:justify-between` to `justify-center` in `src/components/footer/footer.tsx`. With a single `<p>` child, `lg:justify-between` left-aligns it; design shows centered text at all breakpoints. | `src/components/footer/footer.tsx`
 
-### Types
-
-- [x] T013 [P] Define `AuthError`, `Language`, `LanguageOption` TypeScript types | src/types/auth.ts
-
-### Middleware (implementation only — tests skipped)
-
-- [x] T014 Write failing unit tests for middleware *(skipped — no test runner)* | middleware.test.ts
-- [x] T015 Implement middleware: session guard; public routes allow-list; redirect logic | middleware.ts
-
-### OAuth Callback Route (implementation only — tests skipped)
-
-- [x] T016 Write failing unit tests for callback route *(skipped — no test runner)* | src/app/auth/callback/route.test.ts
-- [x] T017 Implement `GET` handler: exchange code → session; open-redirect guard on `next` param | src/app/auth/callback/route.ts
-
-**Checkpoint**: ✅ `yarn tsc --noEmit` passes; `yarn lint` clean
+**Checkpoint**: Both spec violations fixed — layout scrolls on short viewports + footer flows naturally
 
 ---
 
 ## Phase 3: User Story 1 — Login with Google (Priority: P1) 🎯 MVP
 
-**Goal**: Unauthenticated user visits `/login`, clicks "LOGIN With Google", completes Google OAuth, and is redirected to the home page with a valid Supabase session.
+**Goal**: Unauthenticated user clicks "LOGIN With Google", completes Google OAuth, and lands on the home page with a valid session.
 
-**Independent Test**: Load `/login` → page renders with SAA logo, ROOT FURTHER image, hero text, login button, footer.
+**Independent Test**: Navigate to `/login` → Click button → Complete Google OAuth → Verify redirect to `/` + session cookie set.
 
-### Leaf UI Components
+### Verification (US1)
 
-- [x] T018 [P] [US1] Create circular loading spinner: 24×24px, `animate-spin` | src/components/login/spinner.tsx
-- [x] T019 [P] [US1] Create inline error message: conditional render, `role="alert"`, dark-red styling | src/components/login/error-message.tsx
-- [x] T020 [P] [US1] Create RSC footer: Montserrat Alternates 700 16px, `border-t border-[#2E3940]` | src/components/footer/footer.tsx
-- [x] T021 [P] [US1] Create RSC header stub: SAA logo + LanguageSelector slot | src/components/header/header.tsx
+- [ ] T008 [US1] Test Google OAuth happy path end-to-end: click "LOGIN With Google" → Google consent screen → callback → redirect to `/`. Verify session cookie is `HttpOnly` in DevTools → Application → Cookies.
+- [ ] T009 [US1] Test authenticated user redirect: after login, navigate to `/login` → verify automatic redirect to `/` without showing login UI.
+- [ ] T010 [US1] Test OAuth cancellation: cancel Google OAuth → verify redirect to `/login?error=access_denied` → error message "Bạn đã từ chối cấp quyền. Vui lòng thử lại." displayed below button.
+- [ ] T011 [US1] Test invalid callback: navigate directly to `/auth/callback` without `code` param → verify redirect to `/login?error=auth_error`.
 
-### Login Button
+### Unit Tests (US1)
 
-- [x] T022 [US1] Write failing unit tests for LoginButton *(skipped — no test runner)* | src/components/login/login-button.test.tsx
-- [x] T023 [US1] Implement LoginButton: `isLoading`/`error` state, 30s timeout, `signInWithOAuth`, ARIA attrs | src/components/login/login-button.tsx
+- [ ] T012 [P] [US1] Create LoginButton unit tests in `src/components/login/__tests__/login-button.test.tsx`:
+  - Renders button with text "LOGIN With Google" and Google icon
+  - Click → `signInWithOAuth` called with `provider: 'google'` and `redirectTo` containing `/auth/callback`
+  - Click → button becomes disabled (`aria-disabled="true"`), shows spinner (`aria-busy="true"`)
+  - Double-click → only one `signInWithOAuth` call (duplicate prevention)
+  - URL `?error=auth_error` → error message rendered with `role="alert"` text "Đăng nhập thất bại. Vui lòng thử lại."
+  - URL `?error=access_denied` → error message "Bạn đã từ chối cấp quyền. Vui lòng thử lại."
+  - 30-second timeout → `isLoading` reset to false, timeout error message shown
+  - Error auto-clears on next button click (setError(null) before setIsLoading(true))
+  - Mock: `vi.mock("@/libs/supabase/client")`, `vi.mock("next/navigation")`
 
-### Hero Section & Page Assembly
+- [ ] T013 [P] [US1] Create OAuth callback route handler tests in `src/app/auth/callback/__tests__/route.test.ts`:
+  - `?code=valid` → `exchangeCodeForSession` called → redirect to `/`
+  - `?code=valid&next=/awards` → redirect to `/awards` (safe relative path accepted)
+  - `?code=valid&next=https://evil.com` → redirect to `/` (open-redirect guard rejects protocol)
+  - `?code=valid&next=//evil.com` → redirect to `/` (protocol-relative guard rejects `//`)
+  - `?code=valid&next=/evil:scheme` → redirect to `/` (path with colon rejected)
+  - No `code` param → redirect to `/login?error=auth_error`
+  - `exchangeCodeForSession` returns error → redirect to `/login?error=auth_error`
+  - Mock: `vi.mock("@/libs/supabase/server")`
 
-- [x] T024 [US1] Create RSC HeroSection: ROOT FURTHER image + hero description + LoginButton | src/components/login/hero-section.tsx
-- [x] T025 [US1] Create RSC LoginPage: session check → redirect; gradient overlays; full layout | src/app/login/page.tsx
-
-### E2E Test
-
-- [ ] T026 [US1] Write Playwright E2E test for US1 | tests/e2e/login.spec.ts
-
-**Checkpoint**: ✅ `yarn build` succeeds; `/login` renders correctly in browser
+**Checkpoint**: User Story 1 — Google OAuth login — verified and unit tested
 
 ---
 
 ## Phase 4: User Story 2 — Language Selection (Priority: P2)
 
-**Goal**: User can click the language selector, see a dropdown, close by Escape or clicking outside.
+**Goal**: User clicks language selector in header, dropdown opens, user can select a different language (VN/EN).
 
-- [x] T027 [US2] Write failing unit tests for LanguageSelector *(skipped — no test runner)* | src/components/header/language-selector.test.tsx
-- [x] T028 [US2] Implement LanguageSelector: open/close state, outside-click, Escape, chevron rotation, ARIA | src/components/header/language-selector.tsx
-- [x] T029 [US2] Wire LanguageSelector into Header with default VN language | src/components/header/header.tsx
+**Independent Test**: Load `/login` → Click "VN" button → Dropdown opens → Click "EN" → Selector shows "EN" + EN flag → Dropdown closes.
 
-**Checkpoint**: ✅ Language dropdown works; Escape and outside-click close correctly
+### Bug Fix (US2)
+
+- [ ] T014 [US2] Add ArrowDown/ArrowUp keyboard navigation to language selector dropdown in `src/components/header/language-selector.tsx`:
+  - Add `focusedIndex` state (number, default -1)
+  - Add `tabIndex={-1}` to each `<li role="option">` element for programmatic focus
+  - Add `onKeyDown` handler on the `<ul role="listbox">`:
+    - `ArrowDown` → increment focusedIndex (wrap to 0 at end), focus that `<li>`
+    - `ArrowUp` → decrement focusedIndex (wrap to last at beginning), focus that `<li>`
+    - `Enter` or `Space` → select the focused option (call `setSelected` + `handleClose`)
+  - When dropdown opens, auto-focus the first `<li>` option (set focusedIndex to 0)
+  - Use `useRef` array to track `<li>` DOM references for `.focus()` calls
+
+### Verification (US2)
+
+- [ ] T015 [US2] Test language dropdown: click "VN" button → dropdown opens with VN and EN options → click "EN" → selector updates to show EN flag + "EN" → dropdown closes.
+- [ ] T016 [US2] Test keyboard: focus selector → Enter → dropdown opens → ArrowDown → ArrowDown → Enter selects option → dropdown closes. Also test Escape closes dropdown.
+- [ ] T017 [US2] Test outside click: open dropdown → click anywhere outside → dropdown closes without changing language.
+
+### Unit Tests (US2)
+
+- [ ] T018 [US2] Create LanguageSelector unit tests in `src/components/header/__tests__/language-selector.test.tsx`:
+  - Click toggle button → dropdown opens, `aria-expanded="true"`
+  - Click toggle again → dropdown closes, `aria-expanded="false"`
+  - Click language option → `selected` updates, dropdown closes
+  - Click outside container → dropdown closes without changing selected language
+  - Press `Escape` → dropdown closes
+  - Press `ArrowDown` when open → focus moves to next option
+  - Press `ArrowUp` when open → focus moves to previous option (wraps)
+  - Press `Enter` on focused option → selects it and closes
+  - Dropdown shows currently selected item with `aria-selected="true"`
+  - Supports controlled mode (isOpen + onToggle props)
+
+**Checkpoint**: User Story 2 — Language selection — verified and unit tested
 
 ---
 
-## Phase 5: Polish & Cross-Cutting Concerns
+## Phase 5: E2E Tests
 
-- [ ] T030 [P] Verify responsive layout at 360px / 768px / 1440px | src/app/login/page.tsx, src/components/login/hero-section.tsx
-- [ ] T031 [P] Accessibility audit: tab order, focus rings, screen reader | —
-- [x] T032 `yarn lint` + `yarn build` — zero errors | —
-- [ ] T033 `yarn preview` — Cloudflare Workers edge-compat check | —
+**Purpose**: End-to-end Playwright tests covering critical P1 login flow
 
-### Bug Fixes
+- [ ] T019 Create E2E login test in `tests/e2e/login.spec.ts`:
+  - Test: unauthenticated user navigates to `/login` → sees "LOGIN With Google" button, ROOT FURTHER image, SAA logo, language selector
+  - Test: click "LOGIN With Google" → browser navigates away (intercepted via `page.route()` mock for Supabase OAuth URL)
+  - Test: responsive at 360px → button is full-width; at 1440px → button is 305px
+  - Test: page scrolls on short viewport (360×500px) — footer visible after scroll
+  - Test: error message shown when navigating to `/login?error=auth_error`
+  - Mock: `page.route('**/auth/v1/authorize**', ...)` to intercept Supabase OAuth redirect
 
-- [x] T034 Fix incorrect font classes across all components: replace `font-[family-name:var(...)]` (invalid in TailwindV4) with `font-sans`/`font-alt` theme utilities; add missing `tracking-[0.15px]` to Language "VN" label per `--text-nav-label` token | src/components/footer/footer.tsx, src/components/header/language-selector.tsx, src/components/login/error-message.tsx, src/components/login/login-button.tsx, src/components/login/hero-section.tsx, src/app/globals.css
+**Checkpoint**: E2E coverage for P1 login flow
 
-**Checkpoint**: ✅ Lint clean; TypeScript passes; fonts render from Montserrat/Montserrat Alternates correctly
+---
+
+## Phase 6: Polish & Cross-Cutting Concerns
+
+**Purpose**: Accessibility audit, build verification, final cleanup
+
+- [ ] T020 [P] Accessibility audit on `/login`: verify tab order (Logo → Language Selector → Login Button), focus rings visible on all interactive elements, `aria-busy`/`aria-disabled`/`aria-expanded`/`aria-label` attributes correct, error message announced by screen reader (`role="alert"` + `aria-live="assertive"`)
+- [ ] T021 [P] Run `yarn lint` on all login-related files and fix any issues: `src/app/login/page.tsx`, `src/components/login/**`, `src/components/header/language-selector.tsx`, `src/app/auth/callback/route.ts`, `middleware.ts`
+- [ ] T022 [P] Run `yarn build` and verify no build errors — confirm edge-runtime compatibility (no Node.js-only APIs in route handler or middleware)
+- [ ] T023 Verify all Vitest tests pass: run `yarn test` and confirm all login-related tests green
+
+**Checkpoint**: Login feature complete — all tests pass, build succeeds, accessibility verified
 
 ---
 
@@ -128,48 +163,57 @@
 ### Phase Dependencies
 
 ```
-Phase 1 (Setup + Assets)
-    └──> Phase 2 (Foundation)
-              ├──> Phase 3 (US1) ✅
-              │         └──> Phase 4 (US2) ✅
-              │                   └──> Phase 5 (Polish) ← in progress
-              └──> Bug Fixes (T034) ✅
+Phase 1 (Setup)
+  └── Phase 2 (Bug Fixes) ← BLOCKS all user stories
+        ├── Phase 3 (US1: Login with Google) ← MVP
+        │     └── Phase 5 (E2E Tests) ← depends on US1 verification
+        └── Phase 4 (US2: Language Selection) ← can run parallel with Phase 3
+              └── Phase 5 (E2E Tests)
+                    └── Phase 6 (Polish)
 ```
 
----
+### Within Each Phase
 
-## Summary
+- Bug fixes (T004–T007): Sequential — T004 → T005 → T006 → T007 (layout depends on prior changes)
+- US1 Verification (T008–T011): Sequential (require running app) but independent of US1 Unit Tests
+- US1 Unit Tests (T012, T013): Parallel [P] — different test files, no shared state
+- US2 fix (T014) → US2 Verification (T015–T017) → US2 Unit Tests (T018): Sequential
+- E2E (T019): After US1 + US2 verification
+- Polish (T020–T022): Parallel [P]; T023 after all tests written
 
-| Phase | Tasks | Status |
-|-------|-------|--------|
-| Phase 1: Setup | T001–T010 (10) | ✅ Complete (T007 fallback; T001-T004 skipped) |
-| Phase 2: Foundation | T011–T017 (7) | ✅ Complete (T014, T016 skipped) |
-| Phase 3: US1 (P1) | T018–T026 (9) | ✅ T018-T025 complete; T026 pending |
-| Phase 4: US2 (P2) | T027–T029 (3) | ✅ Complete |
-| Phase 5: Polish | T030–T033 (4) | T032 ✅; T030, T031, T033 pending |
-| Bug Fixes | T034 (1) | ✅ Complete |
+### Parallel Opportunities
 
-### Remaining
-
-- **T026**: Playwright E2E test (login happy path, error display, loading state)
-- **T030**: Responsive layout verification (360px, 768px, 1440px)
-- **T031**: Accessibility audit (tab order, focus rings, screen reader)
-- **T033**: Cloudflare edge-compat verification (`yarn preview`)
+| Tasks | Why parallel |
+|-------|-------------|
+| T012 + T013 | Different test files (`login-button.test.tsx` vs `route.test.ts`), no shared mocks |
+| T020 + T021 + T022 | Accessibility audit, lint, build — independent checks |
+| Phase 3 + Phase 4 | US1 and US2 touch different components (`login-button.tsx` vs `language-selector.tsx`) |
 
 ---
 
-## Phase 6: Bug Fixes (UI & Logic Review)
+## Implementation Strategy
 
-**Purpose**: Fix visual and logic regressions discovered during design review.
+### MVP First (Recommended)
 
-- [x] T035 [P] Add `keyvisual-bg.svg` background image to login page — `public/images/keyvisual-bg.svg` exists but is unused; add as absolute full-bleed `<Image>` below gradient overlays (z-0) | src/app/login/page.tsx
-- [x] T036 [P] Hide error message during loading state in LoginButton — `getErrorMessage(errorCode) ?? error` renders URL error even when `isLoading=true`; fix by suppressing error display while loading | src/components/login/login-button.tsx
+1. Complete Phase 1 (Setup) + Phase 2 (Bug Fixes)
+2. Complete Phase 3 (US1: Login with Google) — **this is the MVP**
+3. **STOP and VALIDATE**: Test Google OAuth flow end-to-end manually
+4. Deploy if login works
+
+### Incremental Delivery
+
+1. Setup + Bug Fixes (Phase 1 + 2)
+2. US1: Login with Google → Manual verify → Unit tests (Phase 3)
+3. US2: Language Selection → Manual verify → Unit tests (Phase 4)
+4. E2E tests (Phase 5)
+5. Polish + build verification (Phase 6)
 
 ---
 
 ## Notes
 
-- Background artwork node `662:14389` returns 404 from MoMorph — `keyvisual-bg.svg` was later found at `public/images/keyvisual-bg.svg` (T035 fixes this)
-- Vitest skipped: Node 16 environment incompatible with Vitest 2+/4+ (requires Node ≥18; uses `crypto.getRandomValues`)
-- Font fix (T034): TailwindV4 does not support `font-[family-name:var(...)]` arbitrary type hint; use `@theme`-registered `font-sans`/`font-alt` utilities instead
-- `font-sans` → Montserrat (inherited by `body` via `globals.css`); `font-alt` → Montserrat Alternates
+- **Implementation ~90% done**: Most tasks are verification, bug fixes, and testing — not greenfield implementation
+- **Test convention**: Follow existing project pattern — `src/components/<feature>/__tests__/<name>.test.tsx` for unit tests, `tests/e2e/<name>.spec.ts` for E2E
+- **Mocking strategy**: Use `vi.mock()` for Supabase client + `next/navigation`; use Playwright `page.route()` for E2E OAuth interception
+- **T004–T006 are the riskiest tasks**: Layout restructuring may have cascading effects — test at all breakpoints after each change
+- **Phase 1 requires manual steps**: Google Cloud Console credentials + Docker Desktop — cannot be fully automated

@@ -11,7 +11,7 @@ const digitalNumbers = localFont({
   src: "../../fonts/digital-numbers.ttf",
   variable: "--font-digital",
   display: "swap",
-  fallback: ['"Courier New"', "monospace"],
+  fallback: ["monospace"],
 });
 
 type PrelaunchCountdownProps = {

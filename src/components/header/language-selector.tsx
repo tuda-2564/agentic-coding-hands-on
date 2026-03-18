@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import type { Language } from "@/types/auth";
 
 type LanguageSelectorProps = {
@@ -17,7 +17,9 @@ export default function LanguageSelector({
 }: LanguageSelectorProps) {
   const [internalIsOpen, setInternalIsOpen] = useState(false);
   const [selected, setSelected] = useState<Language>(languages[0]);
+  const [focusedIndex, setFocusedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef<(HTMLLIElement | null)[]>([]);
 
   const isControlled = controlledIsOpen !== undefined;
   const isOpen = isControlled ? controlledIsOpen : internalIsOpen;
@@ -28,7 +30,11 @@ export default function LanguageSelector({
     } else {
       setInternalIsOpen((prev) => !prev);
     }
-  }, [isControlled, onToggle]);
+    // When opening, auto-focus the first option
+    if (!isOpen) {
+      setFocusedIndex(0);
+    }
+  }, [isControlled, onToggle, isOpen]);
 
   const handleClose = useCallback(() => {
     if (isControlled && onToggle && isOpen) {
@@ -37,6 +43,48 @@ export default function LanguageSelector({
       setInternalIsOpen(false);
     }
   }, [isControlled, onToggle, isOpen]);
+
+  const handleListKeyDown = useCallback(
+    (e: ReactKeyboardEvent<HTMLUListElement>) => {
+      switch (e.key) {
+        case "ArrowDown": {
+          e.preventDefault();
+          setFocusedIndex((prev) => {
+            const next = prev + 1 >= languages.length ? 0 : prev + 1;
+            optionRefs.current[next]?.focus();
+            return next;
+          });
+          break;
+        }
+        case "ArrowUp": {
+          e.preventDefault();
+          setFocusedIndex((prev) => {
+            const next = prev - 1 < 0 ? languages.length - 1 : prev - 1;
+            optionRefs.current[next]?.focus();
+            return next;
+          });
+          break;
+        }
+        case "Enter":
+        case " ": {
+          e.preventDefault();
+          if (focusedIndex >= 0 && focusedIndex < languages.length) {
+            setSelected(languages[focusedIndex]);
+            handleClose();
+          }
+          break;
+        }
+      }
+    },
+    [languages, focusedIndex, handleClose],
+  );
+
+  // Auto-focus the first option when dropdown opens
+  useEffect(() => {
+    if (isOpen && focusedIndex >= 0) {
+      optionRefs.current[focusedIndex]?.focus();
+    }
+  }, [isOpen, focusedIndex]);
 
   useEffect(() => {
     function handleOutsideClick(e: MouseEvent) {
@@ -93,18 +141,36 @@ export default function LanguageSelector({
         <ul
           role="listbox"
           aria-label="Select language"
+          aria-activedescendant={
+            focusedIndex >= 0
+              ? `lang-option-${languages[focusedIndex]?.code}`
+              : undefined
+          }
+          onKeyDown={handleListKeyDown}
           className="absolute right-0 top-full mt-1 p-1.5 bg-[#00070C] border border-[#998C5F] rounded-lg shadow-lg z-50 overflow-hidden"
         >
-          {languages.map((lang) => {
+          {languages.map((lang, index) => {
             const isSelected = lang.code === selected.code;
             return (
               <li
                 key={lang.code}
+                id={`lang-option-${lang.code}`}
+                ref={(el) => {
+                  optionRefs.current[index] = el;
+                }}
                 role="option"
                 aria-selected={isSelected}
+                tabIndex={-1}
                 onClick={() => {
                   setSelected(lang);
                   handleClose();
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    setSelected(lang);
+                    handleClose();
+                  }
                 }}
                 className={`w-[108px] h-14 p-4 flex flex-row items-center gap-1 cursor-pointer transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white/50 ${
                   isSelected

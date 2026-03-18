@@ -43,7 +43,7 @@ export default function Header({
   }
 
   return (
-    <header className="fixed top-0 left-0 right-0 w-full h-16 px-6 bg-navy/95 backdrop-blur-sm border-b border-gold/10 flex flex-row justify-between items-center z-50">
+    <header className="fixed top-0 left-0 right-0 w-full h-16 px-4 md:px-12 lg:px-36 bg-navy/95 backdrop-blur-sm border-b border-gold/10 flex flex-row justify-between items-center z-50">
       <Image
         src="/images/saa-logo.png"
         alt="SAA 2025"

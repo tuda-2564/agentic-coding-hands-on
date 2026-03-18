@@ -5,7 +5,7 @@
 **File Key**: `9ypp4enmFmdK3YAFJLIu6C`
 **Figma Link**: https://momorph.ai/files/9ypp4enmFmdK3YAFJLIu6C/frames/662:14387
 **Created**: 2026-03-09
-**Status**: Draft
+**Status**: Reviewed
 
 ---
 
@@ -107,6 +107,9 @@ opens → Select a different language → Verify UI text changes.
   with a retry option.
 - **Mobile device**: The layout MUST adapt per responsive breakpoints (see design-style.md);
   the login button MUST be full-width on mobile; touch targets MUST be ≥ 44×44px (WCAG 2.5.5).
+- **Short viewport**: On viewports shorter than content height, the footer MUST remain at the
+  bottom of the content flow (not clipped behind the hero section). The page MUST scroll
+  naturally to reveal all content including the footer.
 - **Already authenticated**: If the user has a valid session and navigates to `/login`,
   middleware MUST redirect them to the home page before the login page renders.
 - **Concurrent login attempts**: Double-clicking the button MUST NOT trigger two OAuth flows;
@@ -152,7 +155,7 @@ opens → Select a different language → Verify UI text changes.
   - Desktop (`≥ 1024px`): Full 1440px design as per Figma
 - **Transitions**: Login button hover lift effect (150ms ease-out); language chevron rotation on open
 - **Loading state**: Login button MUST show a circular spinner (replacing the Google icon) and be
-  non-interactive during OAuth; button text changes to "Logging in…" or remains as-is with spinner
+  non-interactive during OAuth; button text remains "LOGIN With Google" — the spinner replaces only the icon
 - **Error state**: When OAuth fails, an inline error message MUST appear below the Login button
   (see error message component in design-style.md); the message must be dismissible or auto-clear
   on next click
@@ -164,18 +167,20 @@ opens → Select a different language → Verify UI text changes.
   - Tab order: Header Logo → Language Selector → Login Button (logical top-to-bottom, left-to-right)
   - `Enter` or `Space` MUST activate the Login Button
   - `Enter` or `Space` MUST open/close the Language Selector dropdown
+  - When dropdown is open, `ArrowDown`/`ArrowUp` SHOULD move focus between language options;
+    `Enter` or `Space` on a focused option MUST select it and close the dropdown
   - `Escape` MUST close the Language Selector dropdown
 - **ARIA**:
-  - Login button: `role="button"`, `aria-label="Login with Google"`, `aria-busy="true"` when loading,
-    `aria-disabled="true"` when loading
+  - Login button: `<button>` element (implicit `role="button"`), `aria-label="Login with Google"`,
+    `aria-busy="true"` when loading, `aria-disabled="true"` when loading
   - Language selector: `role="button"`, `aria-expanded="false|true"`, `aria-haspopup="listbox"`,
     `aria-label="Select language, current: Vietnamese"`
-  - Error message: `role="alert"` so screen readers announce it immediately
+  - Error message: `role="alert"` with `aria-live="assertive"` so screen readers announce it immediately
 - **Focus ring**: All interactive elements MUST have a visible focus ring (2px outline) meeting
   WCAG 2.4.7
 - **Color contrast**: #FFEA9E (`#FFEA9E`) on `#00101A` = 10.7:1 ✅; white on `#0B0F12` = 18.9:1 ✅
 - **Screen reader**: Background decorative images MUST have `alt=""` (empty alt); the ROOT FURTHER
-  key visual MUST have descriptive alt text (e.g., `alt="ROOT FURTHER – SAA 2025"`)
+  key visual MUST have descriptive alt text (e.g., `alt="Root Further"` or `alt="ROOT FURTHER – SAA 2025"`)
 
 ---
 
@@ -300,8 +305,9 @@ User clicks button
 
 - The "ROOT FURTHER" image and SAA logo image assets are referenced as `MM_MEDIA_*` media
   items in MoMorph; they MUST be downloaded and placed in `public/` before implementation.
-- The background artwork (C_Keyvisual) is a large decorative image; it MUST be lazy-loaded
-  or used as a CSS background to avoid LCP impact.
+- The background artwork (C_Keyvisual) is a full-bleed decorative image. Since it is above the
+  fold and contributes to LCP, it MUST use `priority` on the `<Image>` element. It MUST have
+  `alt=""` and `aria-hidden="true"` since it is purely decorative.
 - Google OAuth requires a verified redirect URI configured in Google Cloud Console and in
   Supabase Auth settings; this is an infrastructure prerequisite.
 - The Supabase auth callback route MUST be at `/auth/callback` (or configured in Supabase

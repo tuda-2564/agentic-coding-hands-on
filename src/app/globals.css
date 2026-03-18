@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@source "../../src";
+@source "../../public";
+@source not "../../.momorph";
 
 :root {
 	--background: #ffffff;
@@ -23,6 +26,18 @@
 	--color-countdown-bg: rgba(26, 42, 58, 0.9);
 	--color-kudos-orange: #FF6B35;
 	--color-footer-bg: #000D14;
+
+	/* Kudos Live Board tokens */
+	--color-kudos-container-2: #00070C;
+	--color-kudos-gold: #FFEA9E;
+	--color-kudos-cream: #FFF8E1;
+	--color-kudos-warm: #FFF3C6;
+	--color-kudos-border: #998C5F;
+	--color-kudos-divider: #2E3940;
+	--color-kudos-heart: #D4271D;
+	--color-kudos-header-bg: rgba(16, 20, 23, 0.8);
+	--color-kudos-text-secondary: #999999;
+	--color-kudos-error-highlight: #F17676;
 
 	--animate-fade-in: fade-in 500ms ease-out;
 }
@@ -60,4 +75,33 @@ body {
 	100% {
 		background-position: -200% 0;
 	}
+}
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateX(-50%) translateY(4px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(-50%) translateY(0);
+	}
+}
+
+/* Skip to content link (accessibility) */
+.skip-to-content {
+	position: absolute;
+	left: -9999px;
+	top: 0;
+	z-index: 100;
+	padding: 0.5rem 1rem;
+	background: var(--color-kudos-gold);
+	color: var(--color-navy);
+	font-weight: 700;
+	font-size: 0.875rem;
+	border-radius: 0 0 0.5rem 0;
+}
+
+.skip-to-content:focus {
+	left: 0;
 }

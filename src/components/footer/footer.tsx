@@ -9,7 +9,7 @@ type FooterProps = {
 const SAA_NAV_LINKS = [
   { label: "About SAA 2025", href: "/" },
   { label: "Award Information", href: "/awards" },
-  { label: "Sun* Kudos", href: "/#kudos-heading" },
+  { label: "Sun* Kudos", href: "/kudos" },
   { label: "Tiêu chuẩn chung", href: "/standards" },
 ];
 
@@ -83,7 +83,7 @@ export default function Footer({
   }
 
   return (
-    <footer className="absolute bottom-0 w-full px-4 md:px-12 lg:px-[90px] py-10 border-t border-[#2E3940] flex justify-center lg:justify-between items-center">
+    <footer className="relative z-2 mt-auto w-full px-4 md:px-12 lg:px-[90px] py-10 border-t border-[#2E3940] flex justify-center items-center">
       <p className="font-alt font-bold text-base leading-6 text-white text-center">
         Bản quyền thuộc về Sun* © 2025
       </p>

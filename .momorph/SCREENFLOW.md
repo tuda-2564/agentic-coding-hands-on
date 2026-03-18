@@ -5,7 +5,7 @@
 - **Figma File Key**: `9ypp4enmFmdK3YAFJLIu6C`
 - **Figma URL**: https://www.figma.com/design/9ypp4enmFmdK3YAFJLIu6C
 - **Created**: 2026-03-09
-- **Last Updated**: 2026-03-12
+- **Last Updated**: 2026-03-17
 
 ---
 
@@ -14,7 +14,7 @@
 | Metric | Count |
 |--------|-------|
 | Total Screens | TBD |
-| Discovered | 6 |
+| Discovered | 7 |
 | Remaining | TBD |
 | Completion | — |
 
@@ -30,6 +30,7 @@
 | 4 | Hệ thống giải (Award System) | `313:8436` | [Open in Figma](https://www.figma.com/design/9ypp4enmFmdK3YAFJLIu6C?node-id=313-8436) | discovered | [spec.md](specs/313-8436-HeThongGiai/spec.md) | `GET /api/awards` (predicted) | Homepage SAA (header nav), Sun* Kudos (Chi tiết button), Login (session expiry) |
 | 5 | Dropdown Ngôn Ngữ (Language Selector) | `721:4942` | [Open in Figma](https://momorph.ai/files/9ypp4enmFmdK3YAFJLIu6C/frames/721:4942) | discovered | [spec.md](specs/721-4942-DropdownNgonNgu/spec.md) | N/A (client-side only) | Same page (in-place language switch) |
 | 6 | Countdown — Prelaunch Page | `2268:35127` | [Open in Figma](https://momorph.ai/files/9ypp4enmFmdK3YAFJLIu6C/frames/2268:35127) | discovered | [spec.md](specs/2268-35127-CountdownPrelaunchPage/spec.md) | `GET /api/campaign/active` (existing) | Homepage SAA (on countdown expiry) |
+| 7 | Sun* Kudos - Live board | `2940:13431` | [Open in Figma](https://www.figma.com/design/9ypp4enmFmdK3YAFJLIu6C?node-id=2940-13431) | discovered | [spec.md](specs/2940-13431-SunKudosLiveBoard/spec.md) | `GET /api/kudos/highlight`, `GET /api/kudos`, `GET /api/kudos/stats`, `GET /api/sunners/spotlight`, `GET /api/sunners/gift-recipients`, `POST /api/kudos/{id}/like` | Viết Kudo (`520:11602`), Profile Preview (`721:5827`), Open Secret Box (`1466:7676`), Dropdown Hashtag (`1002:13013`), Dropdown Phòng ban (`721:5684`) |
 
 ---
 
@@ -49,9 +50,13 @@ flowchart TD
     subgraph Main["Main Application"]
         HomepageSAA["Homepage SAA\n(2167:9026)"]
         ProfileDropdown["Profile Dropdown"]
-        KudosLiveBoard["Sun* Kudos Live Board"]
+        KudosLiveBoard["Sun* Kudos Live Board\n(2940:13431)"]
         AwardSystem["Hệ thống giải\n(313:8436)"]
         VietKudo["Viết Kudo Modal\n(520:11602)"]
+        ProfilePreview["Profile Preview\n(721:5827)"]
+        OpenSecretBox["Open Secret Box\n(1466:7676)"]
+        DropdownHashtag["Dropdown Hashtag\n(1002:13013)"]
+        DropdownPhongBan["Dropdown Phòng ban\n(721:5684)"]
     end
 
     Login -->|"Click LOGIN With Google"| GoogleOAuth
@@ -71,6 +76,12 @@ flowchart TD
     HomepageSAA -->|"Click Viết Kudo / Gửi kudo"| VietKudo
     ProfileDropdown -->|"Click outside / close"| HomepageSAA
     VietKudo -->|"Submit success / Cancel / Close"| HomepageSAA
+    KudosLiveBoard -->|"Click recognition input"| VietKudo
+    KudosLiveBoard -->|"Hover avatar/name"| ProfilePreview
+    KudosLiveBoard -->|"Click Mở quà"| OpenSecretBox
+    KudosLiveBoard -->|"Click Hashtag filter"| DropdownHashtag
+    KudosLiveBoard -->|"Click Phòng ban filter"| DropdownPhongBan
+    KudosLiveBoard -->|"Session expired"| Login
 ```
 
 ---
@@ -87,7 +98,7 @@ flowchart TD
 | Screen | Purpose | Entry Points |
 |--------|---------|--------------|
 | Homepage SAA (`2167:9026`) | Main hub post-authentication — campaign branding, awards system, kudos | Successful Google OAuth callback, header nav |
-| Sun* Kudos Live Board | Real-time kudos board for employee recognition | Homepage SAA scroll/link |
+| Sun* Kudos Live Board (`2940:13431`) | Real-time kudos board — highlight carousel, spotlight word cloud, all kudos feed, personal stats, Secret Box, sunner leaderboards | Homepage SAA scroll/link, Award System "Sun* Kudos" nav |
 | Hệ thống giải (`313:8436`) | Award system page — 6 award categories (Top Talent, Top Project, Top Project Leader, Best Manager, Signature 2025 - Creator, MVP) with sidebar navigation, descriptions, quantities, prize values, and Sun* Kudos promo | Award card / "Award Information" nav from Homepage SAA, header nav |
 | Viết Kudo (`520:11602`) | Modal dialog for composing and sending kudos to teammates | "Viết Kudo" / "Gửi kudo" button on Homepage SAA Kudos section |
 
@@ -109,6 +120,14 @@ flowchart TD
 | `/api/badges` | GET | Viết Kudo | Fetch available recognition badges (Danh hiệu) |
 | `/api/kudos` | POST | Viết Kudo | Submit a kudo (recipients, badge, content, hashtags, image_urls) |
 | Supabase Storage `/kudos-images/{uuid}` | PUT | Viết Kudo | Upload image attachments before kudo submission |
+| `/api/kudos/highlight` | GET | Sun* Kudos Live Board | Fetch top-5 highlight kudos (most hearts) |
+| `/api/kudos` | GET | Sun* Kudos Live Board | Fetch paginated all-kudos feed |
+| `/api/kudos/stats` | GET | Sun* Kudos Live Board | Fetch personal kudos stats (received, sent, hearts, Secret Boxes) |
+| `/api/kudos/spotlight` | GET | Sun* Kudos Live Board | Fetch spotlight data (names + kudos counts for word cloud) |
+| `/api/sunners/gift-recipients` | GET | Sun* Kudos Live Board | Fetch 10 most recent gift recipients |
+| `/api/kudos/{id}/like` | POST | Sun* Kudos Live Board | Toggle like on a kudo |
+| `/api/hashtags` | GET | Sun* Kudos Live Board | Fetch available hashtags for filter dropdown |
+| `/api/departments` | GET | Sun* Kudos Live Board | Fetch departments for filter dropdown |
 
 ---
 
@@ -184,6 +203,7 @@ flowchart LR
 | 2026-03-12 | Specify screen | Hệ thống giải (`313:8436`) | Award system page — 6 categories with sidebar nav, descriptions, prize values |
 | 2026-03-13 | Specify screen | Dropdown Ngôn Ngữ (`721:4942`) | Language selector dropdown — VN/EN switch with gold border, shared component |
 | 2026-03-13 | Specify screen | Countdown Prelaunch (`2268:35127`) | Fullscreen prelaunch countdown — LED-style digit cards, glass-morphism, standalone page |
+| 2026-03-17 | Specify screen | Sun* Kudos - Live board (`2940:13431`) | Kudos live board — highlight carousel, spotlight word cloud, all kudos feed, stats, Secret Box, leaderboards |
 
 ---
 
@@ -192,7 +212,7 @@ flowchart LR
 - [x] ~~Run `/momorph.specify` for Homepage SAA~~
 - [x] ~~Run `/momorph.specify` for Viết Kudo~~
 - [x] ~~Run `/momorph.specify` for Hệ thống giải (Award System)~~
-- [ ] Run `/momorph.specify` for remaining screens (Kudos Live Board, etc.)
+- [x] ~~Run `/momorph.specify` for remaining screens (Kudos Live Board, etc.)~~
 - [ ] Update discovery progress once total screen count is known
 - [ ] Map all API endpoints from additional screens
 - [ ] Verify navigation paths with design team

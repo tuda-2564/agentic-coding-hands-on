@@ -123,6 +123,7 @@ export default function RecipientSearch({
   const dropdownEl = (
     <div
       ref={dropdownRef}
+      id="recipient-listbox"
       role="listbox"
       aria-label="Kết quả tìm kiếm"
       style={dropdownStyle}
@@ -212,8 +213,10 @@ export default function RecipientSearch({
             }
           }}
           placeholder="Tìm kiếm..."
+          role="combobox"
           aria-label="Tìm kiếm người nhận"
           aria-autocomplete="list"
+          aria-controls="recipient-listbox"
           aria-expanded={isDropdownOpen}
           aria-haspopup="listbox"
           aria-required="true"

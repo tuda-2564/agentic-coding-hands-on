@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sanitizeHtml from "sanitize-html";
 import { createClient } from "@/libs/supabase/server";
 import { submitKudo } from "@/services/kudos-submit";
+import { getKudosFeed } from "@/services/kudos-feed";
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
@@ -18,6 +19,35 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
 };
 
 export const runtime = "edge";
+
+export async function GET(request: NextRequest) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401, headers: CORS_HEADERS }
+    );
+  }
+
+  const { searchParams } = new URL(request.url);
+  const cursor = searchParams.get("cursor") ?? undefined;
+  const limit = parseInt(searchParams.get("limit") ?? "10", 10);
+  const hashtag = searchParams.get("hashtag") ?? undefined;
+
+  try {
+    const result = await getKudosFeed(cursor, limit, hashtag, user.id);
+    return NextResponse.json(result, { headers: CORS_HEADERS });
+  } catch {
+    return NextResponse.json(
+      { error: "Failed to fetch kudos" },
+      { status: 500, headers: CORS_HEADERS }
+    );
+  }
+}
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -111,7 +141,7 @@ export async function OPTIONS() {
     status: 204,
     headers: {
       "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type, Authorization",
     },
   });

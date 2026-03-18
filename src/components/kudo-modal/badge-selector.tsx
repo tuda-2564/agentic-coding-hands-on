@@ -89,6 +89,7 @@ export default function BadgeSelector({
   const dropdownEl = (
     <div
       ref={dropdownRef}
+      id="badge-listbox"
       role="listbox"
       aria-label="Danh sách danh hiệu"
       style={dropdownStyle}
@@ -138,6 +139,7 @@ export default function BadgeSelector({
         ref={triggerRef}
         type="button"
         role="combobox"
+        aria-controls="badge-listbox"
         aria-expanded={isOpen}
         aria-haspopup="listbox"
         aria-required="true"
