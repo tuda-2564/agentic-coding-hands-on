@@ -8,7 +8,6 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
 };
 
-export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();

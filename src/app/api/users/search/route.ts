@@ -4,7 +4,6 @@ import { searchUsers } from "@/services/users";
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();

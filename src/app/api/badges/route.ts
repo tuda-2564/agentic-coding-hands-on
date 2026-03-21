@@ -4,7 +4,6 @@ import { getBadges } from "@/services/badges";
 
 const ALLOWED_ORIGIN = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
-export const runtime = "edge";
 
 export async function GET() {
   const supabase = await createClient();

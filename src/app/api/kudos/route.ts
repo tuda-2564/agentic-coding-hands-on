@@ -18,7 +18,6 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   },
 };
 
-export const runtime = "edge";
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient();

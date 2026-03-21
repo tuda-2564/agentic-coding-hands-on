@@ -36,7 +36,10 @@
       "Bash(node -e \":*)",
       "Bash(python3 -:*)",
       "Bash(yarn vitest:*)",
-      "Bash(ls -la public/images/kudos/*.png)"
+      "Bash(ls -la public/images/kudos/*.png)",
+      "Bash(while read:*)",
+      "Bash(do echo:*)",
+      "Bash(sed -i '' '/^export const runtime = \"\"\"\"edge\"\"\"\";$/d' \"$f\")"
     ]
   },
   "enabledMcpjsonServers": [
