@@ -124,7 +124,12 @@
 - [x] T027 Fix AwardsSection divider spacing: `my-16 lg:my-20` (160px total) → `my-8 lg:my-10` (80px total) per design spec | `src/components/awards/awards-section.tsx`
 - [x] T028 Add `priority` prop to AwardImage and pass from AwardCard for first 2 above-fold images (performance optimization from plan T022) | `src/components/awards/award-image.tsx`, `src/components/awards/award-card.tsx`
 - [x] T029 Fix sidebar scroll-spy flickering: track topmost visible section via Set instead of last intersecting entry | `src/components/awards/award-sidebar.tsx`
-- [ ] T030 Write E2E tests covering P1 user stories: all 6 awards displayed with correct data, alternating layout, sidebar click-to-scroll, scroll-spy active state, URL hash navigation (`/awards#mvp`), Signature 2025 dual prize tiers, mobile responsive (sidebar hidden, cards stacked), unauthenticated redirect, image fallback, "Chi tiết" button navigation, header/footer active link styling | `tests/e2e/award-system.spec.ts`
+- [x] T030 Write E2E tests covering P1 user stories: all 6 awards displayed with correct data, alternating layout, sidebar click-to-scroll, scroll-spy active state, URL hash navigation (`/awards#mvp`), Signature 2025 dual prize tiers, mobile responsive (sidebar hidden, cards stacked), unauthenticated redirect, image fallback, "Chi tiết" button navigation, header/footer active link styling | `tests/e2e/award-system.spec.ts`
+- [x] T031 Fix SectionTitle: add Rectangle 26 (1px divider) between subtitle and title, remove section wrapper (now overlaid inside AwardKeyVisual) | `src/components/awards/section-title.tsx`
+- [x] T032 Fix AwardKeyVisual: accept `children?: ReactNode` prop and render as absolute overlay at bottom-left of Bìa frame | `src/components/awards/award-keyvisual.tsx`
+- [x] T033 Fix page.tsx: move `<SectionTitle />` inside `<AwardKeyVisual>` as overlay child; update `Sun* Kudos` nav href from `/#kudos-heading` to `/kudos` | `src/app/awards/page.tsx`
+- [x] T034 Fix KudosPromo: update Chi tiết href to `/kudos`, replace `arrow-right` icon with `external-link` (↗), add Sun* logo image on right side | `src/components/awards/kudos-promo.tsx`
+- [x] T035 Add `public/icons/external-link.svg` — diagonal arrow (↗) icon for external link navigation | `public/icons/external-link.svg`
 
 ---
 

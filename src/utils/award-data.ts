@@ -5,7 +5,7 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "top-talent",
     name: "Top Talent",
     description:
-      "Giải thưởng vinh danh những cá nhân xuất sắc nhất, có đóng góp nổi bật trong năm. Top Talent là những người thể hiện năng lực vượt trội, tinh thần cống hiến và tạo ra giá trị đặc biệt cho tổ chức thông qua chuyên môn, sáng tạo và tinh thần hợp tác.",
+      "Giải thưởng Top Talent vinh danh những cá nhân xuất sắc toàn diện – những người không ngừng khẳng định năng lực chuyên môn vững vàng, hiệu suất công việc vượt trội, luôn mang lại giá trị vượt kỳ vọng, được đánh giá cao bởi khách hàng và đồng đội. Với tinh thần sẵn sàng nhận mọi nhiệm vụ tổ chức giao phó, họ luôn là nguồn cảm hứng, thúc đẩy động lực và tạo ảnh hưởng tích cực đến cả tập thể.",
     imageUrl: "/images/awards/top-talent.svg",
     quantity: 10,
     unitType: "Cá nhân",
@@ -15,7 +15,7 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "top-project",
     name: "Top Project",
     description:
-      "Giải thưởng dành cho những dự án xuất sắc nhất trong năm, ghi nhận sự nỗ lực và thành tựu của cả tập thể. Top Project vinh danh các dự án có tác động lớn, mang lại giá trị cao cho khách hàng và tổ chức.",
+      "Giải thưởng Top Project vinh danh các tập thể dự án xuất sắc với kết quả kinh doanh vượt kỳ vọng, hiệu quả vận hành tối ưu và tinh thần làm việc tận tâm. Đây là các dự án có độ phức tạp kỹ thuật cao, hiệu quả tối ưu hóa nguồn lực và chi phí tốt, đề xuất các ý tưởng có giá trị cho khách hàng, đem lại lợi nhuận vượt trội và nhận được phản hồi tích cực từ khách hàng. Các thành viên tuân thủ nghiêm ngặt các tiêu chuẩn phát triển nội bộ trong phát triển dự án, tạo nên một hình mẫu về sự xuất sắc và chuyên nghiệp.",
     imageUrl: "/images/awards/best-project.svg",
     quantity: 2,
     unitType: "Tập thể",
@@ -25,7 +25,7 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "top-project-leader",
     name: "Top Project Leader",
     description:
-      "Giải thưởng vinh danh những người dẫn dắt dự án xuất sắc nhất, thể hiện khả năng lãnh đạo, quản lý và truyền cảm hứng cho đội nhóm. Top Project Leader là những cá nhân có tầm nhìn chiến lược và khả năng hiện thực hóa mục tiêu.",
+      "Giải thưởng Top Project Leader vinh danh những nhà quản lý dự án xuất sắc – những người hội tụ năng lực quản lý vững vàng, khả năng truyền cảm hứng mạnh mẽ, và tư duy \"Aim High – Be Agile\" trong mọi bài toán và bối cảnh. Dưới sự dẫn dắt của họ, các thành viên không chỉ cùng nhau vượt qua thử thách và đạt được mục tiêu đề ra, mà còn giữ vững ngọn lửa nhiệt huyết, tinh thần Wasshoi, và trưởng thành để trở thành phiên bản tinh hoa – hạnh phúc hơn của chính mình.",
     imageUrl: "/images/awards/culture-champion.svg",
     quantity: 3,
     unitType: "Cá nhân",
@@ -35,7 +35,7 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "best-manager",
     name: "Best Manager",
     description:
-      "Giải thưởng ghi nhận nhà quản lý xuất sắc nhất, người có khả năng xây dựng đội ngũ mạnh, phát triển nhân tài và tạo môi trường làm việc tích cực. Best Manager thể hiện sự tận tâm trong việc đồng hành và phát triển con người.",
+      "Giải thưởng Best Manager vinh danh những nhà lãnh đạo tiêu biểu – người đã dẫn dắt đội ngũ của mình tạo ra kết quả vượt kỳ vọng, tác động nổi bật đến hiệu quả kinh doanh và sự phát triển bền vững của tổ chức. Dưới sự lãnh đạo của họ, đội ngũ luôn chinh phục và làm chủ mọi mục tiêu bằng năng lực đa nhiệm, khả năng phối hợp hiệu quả, và tư duy ứng dụng công nghệ linh hoạt trong kỷ nguyên số. Họ truyền cảm hứng để tập thể trở nên tự tin tràn đầy năng lượng, sẵn sàng đón nhận, thậm chí dẫn dắt tạo ra những thay đổi có tính cách mạng.",
     imageUrl: "/images/awards/best-manager.svg",
     quantity: 1,
     unitType: "Cá nhân",
@@ -45,10 +45,10 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "signature-2025",
     name: "Signature 2025 - Creator",
     description:
-      "Giải thưởng đặc biệt của năm 2025, vinh danh những cá nhân và tập thể có đóng góp sáng tạo đột phá, mang lại giá trị mới mẻ và khác biệt cho tổ chức. Signature 2025 - Creator tôn vinh tinh thần đổi mới và khả năng kiến tạo.",
+      "Giải thưởng Signature vinh danh cá nhân hoặc tập thể thể hiện tinh thần đặc trưng mà Sun* hướng tới trong từng thời kỳ.\n\nTrong năm 2025, giải thưởng Signature vinh danh Creator - cá nhân/tập thể mang tư duy chủ động và nhạy bén, luôn nhìn thấy cơ hội trong thách thức và tiên phong trong hành động. Họ là những người nhạy bén với vấn đề, nhanh chóng nhận diện và đưa ra những giải pháp thực tiễn, mang lại giá trị rõ rệt cho dự án, khách hàng hoặc tổ chức. Với tư duy kiến tạo và tinh thần \"Creator\" đặc trưng của Sun*, họ không chỉ phản ứng tích cực trước sự thay đổi mà còn chủ động tạo ra cải tiến, góp phần định hình chuẩn mực mới cho cách mà người Sun* tạo giá trị.",
     imageUrl: "/images/awards/innovation.svg",
     quantity: 1,
-    unitType: "Cá nhân + Tập thể",
+    unitType: "Cá nhân hoặc tập thể",
     prizeTiers: [
       { label: "cho giải cá nhân", value: "5.000.000 VNĐ" },
       { label: "cho giải tập thể", value: "8.000.000 VNĐ" },
@@ -58,7 +58,7 @@ export const AWARD_CATEGORIES: AwardDetailCategory[] = [
     id: "mvp",
     name: "MVP (Most Valuable Person)",
     description:
-      "Giải thưởng cao quý nhất của SAA 2025, vinh danh cá nhân có giá trị nhất — người tạo ra ảnh hưởng sâu rộng và đóng góp đặc biệt xuất sắc cho sự phát triển của Sun*. MVP là biểu tượng của sự cống hiến, tài năng và tinh thần Sun*.",
+      "Giải thưởng MVP vinh danh cá nhân xuất sắc nhất năm – gương mặt tiêu biểu đại diện cho toàn bộ tập thể Sun*. Họ là người đã thể hiện năng lực vượt trội, tinh thần cống hiến bền bỉ, và tầm ảnh hưởng sâu rộng, để lại dấu ấn mạnh mẽ trong hành trình của Sun* suốt năm qua.\n\nKhông chỉ nổi bật bởi hiệu suất và kết quả công việc, họ còn là nguồn cảm hứng lan tỏa – thông qua suy nghĩ, hành động và ảnh hưởng tích cực của mình đối với tập thể. MVP là người hội tụ đầy đủ phẩm chất của người Sun* ưu tú, đồng thời mang trên mình trọng trách lớn lao: trở thành hình mẫu đại diện cho con người và tinh thần Sun*, góp phần dẫn dắt tập thể vươn tới những đỉnh cao mới.",
     imageUrl: "/images/awards/mvp.svg",
     quantity: 1,
     unitType: "Cá nhân",

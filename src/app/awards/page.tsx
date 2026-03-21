@@ -12,7 +12,7 @@ import { AWARD_CATEGORIES } from "@/utils/award-data";
 const NAV_LINKS = [
   { label: "About SAA 2025", href: "/" },
   { label: "Award Information", href: "/awards" },
-  { label: "Sun* Kudos", href: "/#kudos-heading" },
+  { label: "Sun* Kudos", href: "/kudos" },
 ];
 
 export default async function AwardsPage() {
@@ -27,7 +27,10 @@ export default async function AwardsPage() {
 
   return (
     <main className="relative min-h-screen bg-navy overflow-hidden">
-      <AwardKeyVisual />
+      {/* Bìa frame: keyvisual image + Section Title overlaid at bottom-left */}
+      <AwardKeyVisual>
+        <SectionTitle />
+      </AwardKeyVisual>
       <Header
         variant="app"
         navLinks={NAV_LINKS}
@@ -38,7 +41,6 @@ export default async function AwardsPage() {
         }}
       />
       <div className="relative">
-        <SectionTitle />
         <ScrollReveal>
           <AwardsSection categories={AWARD_CATEGORIES} />
         </ScrollReveal>

@@ -31,9 +31,10 @@ As a Sun\* employee, I want to see all 6 award categories with their description
 
 1. **Given** the user navigates to the Award System page, **When** the page loads, **Then** all 6 award categories are displayed: Top Talent, Top Project, Top Project Leader, Best Manager, Signature 2025 - Creator, MVP.
 2. **Given** the page has loaded, **When** the user scrolls through award cards, **Then** each card shows: award image, title, description text, number of prizes (with unit type), and prize value in VNĐ.
-3. **Given** the page has loaded, **When** viewing "Top Talent" card, **Then** it displays: quantity "10" (Cá nhân), value "7.000.000 VNĐ", with subtitle "cho mỗi giải thưởng".
-4. **Given** the page has loaded, **When** viewing "Signature 2025 - Creator" card, **Then** it displays two prize tiers: "5.000.000 VNĐ" (cho giải cá nhân) and "8.000.000 VNĐ" (cho giải tập thể).
+3. **Given** the page has loaded, **When** viewing "Top Talent" card, **Then** it displays on a **single horizontal row**: diamond icon + "Số lượng giải thưởng:" label + quantity "10" + unit "Cá nhân"; and below a separate section: "7.000.000 VNĐ" with subtitle "cho mỗi giải thưởng".
+4. **Given** the page has loaded, **When** viewing "Signature 2025 - Creator" card, **Then** it displays: unit "Cá nhân hoặc tập thể", and two separate prize value blocks — "5.000.000 VNĐ" (cho giải cá nhân), a **"Hoặc"** separator with a horizontal divider line, then "8.000.000 VNĐ" (cho giải tập thể).
 5. **Given** the page has loaded, **When** viewing award cards, **Then** odd-indexed cards (1st, 3rd, 5th) show the image on the LEFT side, and even-indexed cards (2nd, 4th, 6th) show the image on the RIGHT side (alternating layout).
+6. **Given** the page has loaded, **When** viewing any award card quantity section, **Then** the diamond icon, "Số lượng giải thưởng:" label, quantity number, and unit type all appear on the **same single horizontal row** (NOT split across multiple lines).
 
 ---
 
@@ -79,8 +80,8 @@ As a Sun\* employee, I want to learn about and navigate to the Sun\* Kudos recog
 
 **Acceptance Scenarios**:
 
-1. **Given** the user scrolls past all award categories, **When** the Sun\* Kudos section is visible, **Then** it displays the program title, description, logo, and a "Chi tiết" action button.
-2. **Given** the user sees the Kudos section, **When** they click "Chi tiết", **Then** they are navigated to the Sun\* Kudos detail page.
+1. **Given** the user scrolls past all award categories, **When** the Sun\* Kudos section is visible, **Then** it displays: subtitle "Phong trào ghi nhận", title "Sun\* Kudos" (gold), description text starting with "ĐIỂM MỚI CỦA SAA 2025...", the Sun\* Kudos logo image, the large "KUDOS" decorative text, and a "Chi tiết" action button.
+2. **Given** the user sees the Kudos section, **When** they click "Chi tiết", **Then** they are navigated to the **Sun\* Kudos Live Board page** (`/kudos`, frame `2940:13431`).
 
 ---
 
@@ -111,7 +112,7 @@ As a Sun\* employee, I want to navigate between SAA 2025 pages using the header 
 **Acceptance Scenarios**:
 
 1. **Given** the user is on the Award System page, **When** viewing the header, **Then** "Award Information" nav link is highlighted as active (gold text with glow and underline).
-2. **Given** the user clicks "Sun\* Kudos" in the header or footer, **When** navigation occurs, **Then** they are taken to the Sun\* Kudos page.
+2. **Given** the user clicks "Sun\* Kudos" in the header or footer, **When** navigation occurs, **Then** they are taken to the Sun\* Kudos Live Board page (`/kudos`).
 
 ---
 
@@ -147,11 +148,13 @@ As a Sun\* employee, I want to navigate between SAA 2025 pages using the header 
 
 ### Navigation Flow
 
-- **From**: Header link "Award Information" from any SAA 2025 page
-- **Within**: Left sidebar menu → scroll to award section (anchor navigation)
-- **To**: Sun\* Kudos page (via "Chi tiết" button or header/footer nav)
-- **To**: "About SAA 2025" page (via header/footer nav)
-- **To**: "Tiêu chuẩn chung" page (via footer nav only — not in header)
+- **From**: Header "Award Information" nav link — from any SAA 2025 page (Homepage, Kudos Live Board)
+- **From**: Homepage SAA award card click
+- **Within**: Left sidebar menu → smooth scroll to award section (anchor navigation, same page)
+- **To**: Sun\* Kudos Live Board (`/kudos`, frame `2940:13431`) — via "Chi tiết" button in Kudos section, or "Sun\* Kudos" in header/footer nav
+- **To**: Homepage SAA (`/`) — via "About SAA 2025" in header nav
+- **To**: "Tiêu chuẩn chung" page — via footer nav only (not in header)
+- **To**: Login (`/login`) — on session expiry (middleware redirect)
 
 ### Visual Requirements
 
@@ -192,7 +195,16 @@ As a Sun\* employee, I want to navigate between SAA 2025 pages using the header 
 
 ### Key Entities *(data)*
 
-- **Award Category**: Represents one award type with properties: id, name, description, image, quantity, unitType (Cá nhân/Tập thể), prizeValue, prizeSubtitle.
+- **Award Category**: Represents one award type with properties: id, name, description, imageUrl, quantity, unitType, prizeTiers[].
+
+| Award | id | imageUrl |
+|-------|----|----------|
+| Top Talent | `top-talent` | `/images/awards/top-talent.svg` |
+| Top Project | `top-project` | `/images/awards/best-project.svg` |
+| Top Project Leader | `top-project-leader` | `/images/awards/culture-champion.svg` |
+| Best Manager | `best-manager` | `/images/awards/best-manager.svg` |
+| Signature 2025 - Creator | `signature-2025` | `/images/awards/innovation.svg` |
+| MVP (Most Valuable Person) | `mvp` | `/images/awards/mvp.svg` |
 - **Award Data** (static for SAA 2025):
 
 | Award | Quantity | Unit | Prize Value | Prize Subtitle |
@@ -201,8 +213,21 @@ As a Sun\* employee, I want to navigate between SAA 2025 pages using the header 
 | Top Project | 02 | Tập thể | 15.000.000 VNĐ | cho mỗi giải thưởng |
 | Top Project Leader | 03 | Cá nhân | 7.000.000 VNĐ | cho mỗi giải thưởng |
 | Best Manager | 01 | Cá nhân | 10.000.000 VNĐ | — |
-| Signature 2025 - Creator | 01 | Cá nhân + Tập thể | 5.000.000 VNĐ (cá nhân) / 8.000.000 VNĐ (tập thể) | cho giải cá nhân / cho giải tập thể |
+| Signature 2025 - Creator | 01 | Cá nhân hoặc tập thể | 5.000.000 VNĐ (cá nhân) / 8.000.000 VNĐ (tập thể) | cho giải cá nhân / cho giải tập thể |
 | MVP (Most Valuable Person) | 01 | Cá nhân | 15.000.000 VNĐ | — |
+
+- **Award Descriptions** (exact content from Figma — must match verbatim):
+
+| Award | Description |
+|-------|-------------|
+| Top Talent | Giải thưởng Top Talent vinh danh những cá nhân xuất sắc toàn diện – những người không ngừng khẳng định năng lực chuyên môn vững vàng, hiệu suất công việc vượt trội, luôn mang lại giá trị vượt kỳ vọng, được đánh giá cao bởi khách hàng và đồng đội. Với tinh thần sẵn sàng nhận mọi nhiệm vụ tổ chức giao phó, họ luôn là nguồn cảm hứng, thúc đẩy động lực và tạo ảnh hưởng tích cực đến cả tập thể. |
+| Top Project | Giải thưởng Top Project vinh danh các tập thể dự án xuất sắc với kết quả kinh doanh vượt kỳ vọng, hiệu quả vận hành tối ưu và tinh thần làm việc tận tâm. Đây là các dự án có độ phức tạp kỹ thuật cao, hiệu quả tối ưu hóa nguồn lực và chi phí tốt, đề xuất các ý tưởng có giá trị cho khách hàng, đem lại lợi nhuận vượt trội và nhận được phản hồi tích cực từ khách hàng. Các thành viên tuân thủ nghiêm ngặt các tiêu chuẩn phát triển nội bộ trong phát triển dự án, tạo nên một hình mẫu về sự xuất sắc và chuyên nghiệp. |
+| Top Project Leader | Giải thưởng Top Project Leader vinh danh những nhà quản lý dự án xuất sắc – những người hội tụ năng lực quản lý vững vàng, khả năng truyền cảm hứng mạnh mẽ, và tư duy "Aim High – Be Agile" trong mọi bài toán và bối cảnh. Dưới sự dẫn dắt của họ, các thành viên không chỉ cùng nhau vượt qua thử thách và đạt được mục tiêu đề ra, mà còn giữ vững ngọn lửa nhiệt huyết, tinh thần Wasshoi, và trưởng thành để trở thành phiên bản tinh hoa – hạnh phúc hơn của chính mình. |
+| Best Manager | Giải thưởng Best Manager vinh danh những nhà lãnh đạo tiêu biểu – người đã dẫn dắt đội ngũ của mình tạo ra kết quả vượt kỳ vọng, tác động nổi bật đến hiệu quả kinh doanh và sự phát triển bền vững của tổ chức. Dưới sự lãnh đạo của họ, đội ngũ luôn chinh phục và làm chủ mọi mục tiêu bằng năng lực đa nhiệm, khả năng phối hợp hiệu quả, và tư duy ứng dụng công nghệ linh hoạt trong kỷ nguyên số. Họ truyền cảm hứng để tập thể trở nên tự tin tràn đầy năng lượng, sẵn sàng đón nhận, thậm chí dẫn dắt tạo ra những thay đổi có tính cách mạng. |
+| Signature 2025 - Creator | **Paragraph 1:** Giải thưởng Signature vinh danh cá nhân hoặc tập thể thể hiện tinh thần đặc trưng mà Sun\* hướng tới trong từng thời kỳ. **Paragraph 2:** Trong năm 2025, giải thưởng Signature vinh danh Creator - cá nhân/tập thể mang tư duy chủ động và nhạy bén, luôn nhìn thấy cơ hội trong thách thức và tiên phong trong hành động. Họ là những người nhạy bén với vấn đề, nhanh chóng nhận diện và đưa ra những giải pháp thực tiễn, mang lại giá trị rõ rệt cho dự án, khách hàng hoặc tổ chức. Với tư duy kiến tạo và tinh thần "Creator" đặc trưng của Sun\*, họ không chỉ phản ứng tích cực trước sự thay đổi mà còn chủ động tạo ra cải tiến, góp phần định hình chuẩn mực mới cho cách mà người Sun\* tạo giá trị. |
+| MVP (Most Valuable Person) | **Paragraph 1:** Giải thưởng MVP vinh danh cá nhân xuất sắc nhất năm – gương mặt tiêu biểu đại diện cho toàn bộ tập thể Sun\*. Họ là người đã thể hiện năng lực vượt trội, tinh thần cống hiến bền bỉ, và tầm ảnh hưởng sâu rộng, để lại dấu ấn mạnh mẽ trong hành trình của Sun\* suốt năm qua. **Paragraph 2:** Không chỉ nổi bật bởi hiệu suất và kết quả công việc, họ còn là nguồn cảm hứng lan tỏa – thông qua suy nghĩ, hành động và ảnh hưởng tích cực của mình đối với tập thể. MVP là người hội tụ đầy đủ phẩm chất của người Sun\* ưu tú, đồng thời mang trên mình trọng trách lớn lao: trở thành hình mẫu đại diện cho con người và tinh thần Sun\*, góp phần dẫn dắt tập thể vươn tới những đỉnh cao mới. |
+
+> **Note on Signature 2025 prize section**: Between the two prize tiers (5.000.000 VNĐ and 8.000.000 VNĐ), the design shows a "Hoặc" separator — a row with the text "Hoặc" followed by a horizontal divider line (Figma node: Frame 524). This separator must be rendered between the two prize value blocks.
 
 ---
 
@@ -279,3 +304,8 @@ As a Sun\* employee, I want to navigate between SAA 2025 pages using the header 
 - The page title uses a very large font (57px) — ensure responsive scaling for smaller screens.
 - Award descriptions are in Vietnamese and contain long paragraphs — ensure proper `text-align: justify` and line clamping if needed.
 - The `backdrop-filter: blur(32px)` on award content blocks provides a frosted glass effect — verify browser support.
+- **Signature 2025 unit type** is "Cá nhân hoặc tập thể" (NOT "Cá nhân + Tập thể").
+- **Signature 2025 and MVP** have **two-paragraph descriptions**; render as separate `<p>` elements with spacing between them.
+- **Quantity row layout**: The diamond icon, label "Số lượng giải thưởng:", quantity number, and unit text are ALL displayed on a **single horizontal row** (`display: flex; flex-direction: row; align-items: center`). Do NOT place number/unit on a separate row.
+- **Prize value layout**: The license icon + label "Giá trị giải thưởng:" is on row 1; the prize amount is on row 2 (no left indent); the subtitle is on row 3 (no left indent). Do NOT add `padding-left` to the value/subtitle.
+- **Kudos description** (exact content from Figma): "ĐIỂM MỚI CỦA SAA 2025 Hoạt động ghi nhận và cảm ơn đồng nghiệp - lần đầu tiên được diễn ra dành cho tất cả Sunner. Hoạt động sẽ được triển khai vào tháng 11/2025, khuyến khích người Sun\* chia sẻ những lời ghi nhận, cảm ơn đồng nghiệp trên hệ thống do BTC công bố. Đây sẽ là chất liệu để Hội đồng Heads tham khảo trong quá trình lựa chọn người đạt giải."

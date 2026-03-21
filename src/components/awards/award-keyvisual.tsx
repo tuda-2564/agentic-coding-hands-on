@@ -1,11 +1,13 @@
 import Image from "next/image";
+import type { ReactNode } from "react";
 
-export default function AwardKeyVisual() {
+type AwardKeyVisualProps = {
+  children?: ReactNode;
+};
+
+export default function AwardKeyVisual({ children }: AwardKeyVisualProps) {
   return (
-    <div
-      className="relative w-full h-[300px] md:h-[450px] lg:h-[627px]"
-      aria-hidden="true"
-    >
+    <div className="relative w-full h-75 md:h-112.5 lg:h-156.75">
       <Image
         src="/images/root-further.png"
         alt=""
@@ -13,13 +15,21 @@ export default function AwardKeyVisual() {
         priority
         className="object-cover"
       />
+      {/* Gradient overlay — fades to dark background at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
             "linear-gradient(0deg, #00101A -4.23%, rgba(0, 19, 32, 0) 52.79%)",
         }}
+        aria-hidden="true"
       />
+      {/* Section Title overlay — bottom-left of Bìa frame (Figma node 313:8453) */}
+      {children && (
+        <div className="absolute bottom-0 left-0 right-0 px-4 md:px-12 lg:px-36 pb-10 lg:pb-16 z-10">
+          {children}
+        </div>
+      )}
     </div>
   );
 }

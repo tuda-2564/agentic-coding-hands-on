@@ -4,6 +4,7 @@ import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
 import KudosKeyvisual from "@/components/kudos-board/kudos-keyvisual";
 import ActionBarWrapper from "@/components/kudos-board/action-bar-wrapper";
+import KudosRulesWrapper from "@/components/kudos/kudos-rules-wrapper";
 import HighlightSection from "@/components/kudos-board/highlight-section";
 import SpotlightSection from "@/components/kudos-board/spotlight-section";
 import AllKudosSection from "@/components/kudos-board/all-kudos-section";
@@ -77,6 +78,9 @@ export default async function KudosPage() {
       />
       <div id="kudos-content" className="pt-20 flex flex-col gap-[120px] pb-[120px]">
         <KudosKeyvisual />
+        <div className="flex justify-center">
+          <KudosRulesWrapper />
+        </div>
         <ActionBarWrapper />
         <HighlightSection initialHighlights={highlights} />
         <SpotlightSection

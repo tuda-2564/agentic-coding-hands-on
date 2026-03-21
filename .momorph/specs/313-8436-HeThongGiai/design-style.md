@@ -113,17 +113,19 @@
 │  └──────────────────────────────────────────────────────────────┘│
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────────┐│
-│  │  Keyvisual (1440x627px)                                      ││
-│  │  ┌──────────────────────────────┐                            ││
-│  │  │  "ROOT FURTHER" (hero text)  │                            ││
-│  │  │  Gradient overlay bottom     │                            ││
+│  │  Bìa frame (Keyvisual + Section Title overlaid)              ││
+│  │  ┌──────────────────────────────┐  ┌──────────────────────┐ ││
+│  │  │  Keyvisual (1440x627px)       │  │ Decorative artwork   │ ││
+│  │  │  "ROOT FURTHER" logo (top-L) │  │ (right side)        │ ││
+│  │  │  Gradient overlay bottom     │  └──────────────────────┘ ││
+│  │  │                              │                            ││
+│  │  │  ┌──────────────────────────────────────────────────────┐ ││
+│  │  │  │  Section Title (overlaid, px: 144px)                 │ ││
+│  │  │  │  "Sun* Annual Awards 2025" (subtitle, white 14px)    │ ││
+│  │  │  │  ─── Rectangle 26 (1px divider, node 313:8455) ───  │ ││
+│  │  │  │  "Hệ thống giải thưởng SAA 2025" (title, gold)     │ ││
+│  │  │  └──────────────────────────────────────────────────────┘ ││
 │  │  └──────────────────────────────┘                            ││
-│  └──────────────────────────────────────────────────────────────┘│
-│                                                                  │
-│  ┌──────────────────────────────────────────────────────────────┐│
-│  │  Section Title (px: 144px)                                   ││
-│  │  "Sun* Annual Awards 2025" (subtitle)                        ││
-│  │  "Hệ thống giải thưởng SAA 2025" (title, gold)              ││
 │  └──────────────────────────────────────────────────────────────┘│
 │                                                                  │
 │  ┌──────────────────────────────────────────────────────────────┐│
@@ -188,6 +190,8 @@
 
 ### Section Title Block
 
+> **Layout note**: The Section Title Block (`313:8453`) is part of the **"Bìa"** frame (`313:8449`) which also contains the "ROOT FURTHER" logo (`313:8450`). Both are layered over the Keyvisual background. The title block appears at the bottom-left of the keyvisual hero area — NOT as a separate section below it.
+
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | 313:8453 | - |
@@ -197,17 +201,35 @@
 | gap | 16px | `gap: 16px` |
 | align-items | flex-start | `align-items: flex-start` |
 
+**Children (in order):**
+1. Subtitle text node (`313:8454`)
+2. Rectangle 26 — thin horizontal divider (`313:8455`)
+3. Frame 488 wrapper → Main title text (`313:8456` → `313:8457`)
+
 #### Subtitle ("Sun\* Annual Awards 2025")
 
 | Property | Value | CSS |
 |----------|-------|-----|
+| **Node ID** | 313:8454 | - |
 | font | Montserrat 24px/32px 700 | `font: 700 24px/32px 'Montserrat'` |
 | color | #FFFFFF | `color: #FFFFFF` |
+
+#### Rectangle 26 — Horizontal Divider Accent
+
+> This is a thin horizontal line separating the subtitle from the main title, visible in the design as a subtle separator over the keyvisual background.
+
+| Property | Value | CSS |
+|----------|-------|-----|
+| **Node ID** | 313:8455 | - |
+| width | 100% (full content width) | `width: 100%` |
+| height | 1px | `height: 1px` |
+| background | #2E3940 (same as divider token) | `background-color: #2E3940` |
 
 #### Title ("Hệ thống giải thưởng SAA 2025")
 
 | Property | Value | CSS |
 |----------|-------|-----|
+| **Node ID** | 313:8457 (inside Frame 488 wrapper `313:8456`) | - |
 | font | Montserrat 57px 700 | `font: 700 57px 'Montserrat'` |
 | color | #FFEA9E | `color: #FFEA9E` |
 
@@ -291,13 +313,15 @@
 
 ### Award Card
 
+> **Gap clarification**: The outer Award Card container (`flex-col, gap: 80px`) has two children: (1) the image+content row (Frame 506), and (2) the bottom horizontal divider (Rectangle 14). The `gap: 80px` pushes 80px of space between the card content and the bottom divider line. The CardList that contains all 6 cards also uses `gap: 80px` between each card item. This creates the rhythm: `[Card Content] → 80px → [Divider] → 80px → [Next Card Content]`.
+
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | 313:8467 (Top Talent example) | - |
 | width | 856px | `width: 100%` |
 | display | flex | `display: flex` |
 | flex-direction | column | `flex-direction: column` |
-| gap | 80px | `gap: 80px` |
+| gap | 80px | `gap: 80px` (between inner content row and bottom divider) |
 
 #### Card Inner Layout (Image + Content)
 
@@ -368,17 +392,28 @@
 
 #### Award Quantity Row
 
+> **Layout**: ALL elements are on a **single horizontal row** (`flex-direction: row`). The icon, label, number, and unit are NOT split across multiple lines.
+
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | I313:8467;214:2534 | - |
 | display | flex | `display: flex` |
+| flex-direction | row | `flex-direction: row` |
 | align-items | center | `align-items: center` |
 | gap | 16px | `gap: 16px` |
-| label | "Số lượng giải thưởng:" — Montserrat 24px/32px 700, #FFEA9E |
-| value | Montserrat 36px/44px 700, #FFFFFF |
-| unit | "Cá nhân/Tập thể" — Montserrat 14px/20px 700, #FFFFFF |
+| icon | MM_MEDIA_Diamond 24x24, #FFEA9E | first child |
+| label | "Số lượng giải thưởng:" — Montserrat 24px/32px 700, #FFEA9E | second child |
+| value | quantity number — Montserrat 36px/44px 700, #FFFFFF | third child |
+| unit | "Cá nhân" / "Tập thể" / "Cá nhân hoặc tập thể" — Montserrat 14px/20px 700, #FFFFFF | fourth child |
+
+**Visual result:**
+```
+♦  Số lượng giải thưởng:  10  Cá nhân
+```
 
 #### Award Prize Value Row
+
+> **Layout**: Vertical stack (`flex-direction: column`). The icon+label are on row 1, the prize value on row 2, the subtitle on row 3. **No left indent** (no padding-left) on the value or subtitle — they align with the left edge of the content block.
 
 | Property | Value | CSS |
 |----------|-------|-----|
@@ -386,9 +421,34 @@
 | display | flex | `display: flex` |
 | flex-direction | column | `flex-direction: column` |
 | gap | 0 | stacked |
-| label | "Giá trị giải thưởng:" — Montserrat 24px/32px 700, #FFEA9E |
-| value | Montserrat 36px/44px 700, #FFFFFF |
-| subtitle | "cho mỗi giải thưởng" — Montserrat 14px/20px 700, #FFFFFF |
+| Row 1 (label row) | flex row: MM_MEDIA_License 24x24 + "Giá trị giải thưởng:" Montserrat 24px/32px 700 #FFEA9E |
+| Row 2 (value) | prize amount — Montserrat 36px/44px 700, #FFFFFF — **no padding-left** |
+| Row 3 (subtitle) | "cho mỗi giải thưởng" — Montserrat 14px/20px 700, #FFFFFF — **no padding-left** |
+
+**Visual result:**
+```
+⊙  Giá trị giải thưởng:
+7.000.000 VNĐ
+cho mỗi giải thưởng
+```
+
+#### Signature 2025 "Hoặc" Separator (Frame 524)
+
+Used exclusively in the Signature 2025 - Creator card, between the two prize value blocks.
+
+| Property | Value | CSS |
+|----------|-------|-----|
+| **Node ID** | 313:8498 | - |
+| display | flex | `display: flex` |
+| align-items | center | `align-items: center` |
+| gap | 8px | `gap: 8px` |
+| "Hoặc" text | Montserrat 14px/20px 700, #998C5F | `color: #998C5F` |
+| divider line | flex: 1, height: 1px, bg: #2E3940 | `flex: 1; height: 1px; background: #2E3940` |
+
+**Visual result:**
+```
+Hoặc ─────────────────────────────
+```
 
 ---
 
@@ -405,25 +465,36 @@
 
 ### Sun* Kudos Section
 
+> **Layout**: Two-column flex row — content block on the LEFT, logo/visual block on the RIGHT. The section has a dark overlay background on the content side.
+
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | 335:12023 | - |
 | width | 1152px | `width: calc(100% - 288px)` |
-| display | flex/group | layout with content + image |
+| display | flex | `display: flex` |
+| flex-direction | row | `flex-direction: row` |
+| align-items | center | `align-items: center` |
+| justify-content | space-between | `justify-content: space-between` |
 | padding-x | 144px (page) | inherited from page |
 
-#### Kudos Content
+#### Kudos Content (Left Column)
 
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | I335:12023;313:8419 | - |
 | display | flex | `display: flex` |
 | flex-direction | column | `flex-direction: column` |
+| gap | 24px | `gap: 24px` |
+
+**Children (in order):**
+1. Frame 494 — stacked label + title + description (flex-col, gap: 8px or similar)
+2. Frame 495 — contains the "Chi tiết" CTA button
 
 #### Kudos Label ("Phong trào ghi nhận")
 
 | Property | Value | CSS |
 |----------|-------|-----|
+| **Node ID** | I335:12023;313:8421 | - |
 | font | Montserrat 24px/32px 700 | `font: 700 24px/32px 'Montserrat'` |
 | color | #FFFFFF | `color: #FFFFFF` |
 
@@ -431,47 +502,61 @@
 
 | Property | Value | CSS |
 |----------|-------|-----|
+| **Node ID** | I335:12023;313:8422 | - |
 | font | Montserrat 57px 700 | `font: 700 57px 'Montserrat'` |
 | color | #FFEA9E | `color: #FFEA9E` |
 
 #### Kudos Description
 
+> The description text starts with "ĐIỂM MỚI CỦA SAA 2025" (uppercase label inline) followed by the paragraph body — both in the same text node, same style.
+
 | Property | Value | CSS |
 |----------|-------|-----|
+| **Node ID** | I335:12023;313:8423 | - |
 | font | Montserrat 16px/24px 700 | `font: 700 16px/24px 'Montserrat'` |
 | color | #FFFFFF | `color: #FFFFFF` |
+| text-align | justify | `text-align: justify` |
+| content | "ĐIỂM MỚI CỦA SAA 2025 Hoạt động ghi nhận và cảm ơn đồng nghiệp - lần đầu tiên được diễn ra dành cho tất cả Sunner. Hoạt động sẽ được triển khai vào tháng 11/2025, khuyến khích người Sun\* chia sẻ những lời ghi nhận, cảm ơn đồng nghiệp trên hệ thống do BTC công bố. Đây sẽ là chất liệu để Hội đồng Heads tham khảo trong quá trình lựa chọn người đạt giải." | — |
 
-#### Kudos Logo ("KUDOS")
+#### Kudos Right Side (Logo + Decorative Text)
+
+> The right side shows a Sun\* Kudos branding visual: the Sun\* logo image (red "S*" mark with "KUDOS" wordmark) and a large decorative "KUDOS" text rendered in SVN-Gotham. A gold curved decorative line element sits behind the logo.
 
 | Property | Value | CSS |
 |----------|-------|-----|
-| font | SVN-Gotham 96px/24px 400 | `font: 400 96px 'SVN-Gotham'` |
+| **Node ID** | I335:12023;313:8417 (Frame 367 — logo image) | - |
+| Kudos Logo image | Sun\* logo + "KUDOS" wordmark | `<img>` / `next/image` |
+| **"KUDOS" decorative text** | **Node ID**: I335:12023;329:2949 | - |
+| font | SVN-Gotham 96px/24px 400 | `font: 400 96px/24px 'SVN-Gotham'` |
 | color | #DBD1C1 | `color: #DBD1C1` |
 | letter-spacing | -13% | `letter-spacing: -0.13em` |
 
 #### Chi tiết Button (CTA)
 
+> The icon after "Chi tiết" text is a **diagonal/external-link arrow** (↗), not a simple right arrow. This navigates to the Sun\* Kudos Live Board.
+
 | Property | Value | CSS |
 |----------|-------|-----|
 | **Node ID** | I335:12023;313:8426 | - |
-| type | text_link with icon |
 | display | flex | `display: flex` |
 | align-items | center | `align-items: center` |
 | gap | 4px | `gap: 4px` |
 | text | "Chi tiết" |
 | font | Montserrat 16px/24px 700 | `font: 700 16px/24px 'Montserrat'` |
 | color | #00101A | `color: #00101A` |
-| background | #FFEA9E (inferred from dark text) | `background-color: #FFEA9E` |
-| icon | 24x24px arrow right | append after text |
+| background | #FFEA9E | `background-color: #FFEA9E` |
+| icon | 24x24px — external-link / arrow-diagonal (↗) | append after text |
 | padding | 16px | `padding: 16px` |
 | border-radius | 4px | `border-radius: 4px` |
+| min-height | 44px | `min-height: 44px` (touch target) |
 | cursor | pointer | `cursor: pointer` |
+| href | `/kudos` (Sun\* Kudos Live Board) | - |
 
 **States:**
 | State | Changes |
 |-------|---------|
 | Default | background: #FFEA9E, color: #00101A |
-| Hover | opacity: 0.9, slight transform (inferred) |
+| Hover | opacity: 0.9 |
 | Focus | outline: 2px solid #FFEA9E, outline-offset: 2px |
 
 ---
@@ -528,7 +613,7 @@ Page (1440x6410, bg: #00101A)
 │   │   └── NavLinks (flex, gap: 24px)
 │   │       ├── NavLink "About SAA 2025" (16px/700, #FFF, px: 16)
 │   │       ├── NavLink "Award Information" (16px/700, #FFEA9E, active, border-b gold)
-│   │       └── NavLink "Sun* Kudos" (14px/700, #FFF, px: 16)
+│   │       └── NavLink "Sun* Kudos" (16px/700, #FFF, px: 16)
 │   └── Right Group (flex, gap: 16px, center)
 │       ├── Notification (40x40, icon 24px, red dot 8px)
 │       ├── Language "VN ▼" (108px, flex, icon + text + chevron)

@@ -32,7 +32,11 @@
       "mcp__playwright__browser_resize",
       "Bash(npx vitest:*)",
       "mcp__momorph__list_media_items",
-      "mcp__momorph__get_media_file"
+      "mcp__momorph__get_media_file",
+      "Bash(node -e \":*)",
+      "Bash(python3 -:*)",
+      "Bash(yarn vitest:*)",
+      "Bash(ls -la public/images/kudos/*.png)"
     ]
   },
   "enabledMcpjsonServers": [

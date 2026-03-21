@@ -117,16 +117,7 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 | `src/utils/award-data.ts` | Static award category constants (6 categories) | Data |
 | `src/utils/__tests__/award-data.test.ts` | Unit tests validating static data integrity | Test |
 | `tests/e2e/award-system.spec.ts` | E2E tests for P1 user stories | Test |
-| `public/images/awards/top-talent.png` | High-res award image (336×336) | Asset |
-| `public/images/awards/top-project.png` | High-res award image (336×336) | Asset |
-| `public/images/awards/top-project-leader.png` | High-res award image (336×336) | Asset |
-| `public/images/awards/best-manager.png` | High-res award image (336×336) | Asset |
-| `public/images/awards/signature-2025.png` | High-res award image (336×336) | Asset |
-| `public/images/awards/mvp.png` | High-res award image (336×336) | Asset |
-| `public/icons/target.svg` | Award title/menu icon | Asset |
-| `public/icons/diamond.svg` | Quantity label icon | Asset |
-| `public/icons/license.svg` | Prize value label icon | Asset |
-| `public/icons/arrow-right.svg` | "Chi tiết" button icon | Asset |
+| `public/icons/external-link.svg` | Diagonal arrow (↗) for "Chi tiết" button | Asset |
 
 ### Modified Files
 
@@ -147,6 +138,16 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 | `src/components/ui/icon.tsx` | Icon rendering for menu items and labels |
 | `src/components/ui/section-skeleton.tsx` | Loading skeleton pattern (reference) |
 | `middleware.ts` | Auth protection — `/awards` is protected by default (no change needed) |
+| `public/images/awards/top-talent.svg` | Award image — Top Talent (already exists) |
+| `public/images/awards/best-project.svg` | Award image — Top Project (already exists) |
+| `public/images/awards/culture-champion.svg` | Award image — Top Project Leader (already exists) |
+| `public/images/awards/best-manager.svg` | Award image — Best Manager (already exists) |
+| `public/images/awards/innovation.svg` | Award image — Signature 2025 - Creator (already exists) |
+| `public/images/awards/mvp.svg` | Award image — MVP (already exists) |
+| `public/icons/target.svg` | Award title/menu icon (already exists) |
+| `public/icons/diamond.svg` | Quantity label icon (already exists) |
+| `public/icons/license.svg` | Prize value label icon (already exists) |
+| `public/icons/arrow-right.svg` | Fallback right-arrow icon (already exists) |
 
 ### Dependencies
 
@@ -192,7 +193,7 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
      description: string;   // Full Vietnamese description
      imageUrl: string;      // Path to /public/images/awards/...
      quantity: number;      // Number of prizes
-     unitType: string;      // "Cá nhân" | "Tập thể" | "Cá nhân + Tập thể"
+     unitType: string;      // "Cá nhân" | "Tập thể" | "Cá nhân hoặc tập thể"
      prizeTiers: PrizeTier[]; // Single or dual prize tiers
    };
    ```
@@ -200,8 +201,8 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 2. **Create `src/utils/award-data.ts`** — Static data constant `AWARD_CATEGORIES: AwardDetailCategory[]` for all 6 categories matching the spec's data table. Each entry includes:
    - `id`: URL-safe slug used as anchor hash (e.g., `"top-talent"`, `"mvp"`)
    - `name`: Display name (e.g., `"Top Talent"`)
-   - `description`: Full Vietnamese description text (to be extracted from Figma frame content)
-   - `imageUrl`: Path to `/images/awards/{slug}.png`
+   - `description`: Full Vietnamese description text (exact content from spec.md data table — Signature 2025 and MVP use `\n\n` as paragraph separator, split at render time)
+   - `imageUrl`: Path to existing SVG files — see spec.md data table for exact paths (e.g., `top-talent` → `/images/awards/top-talent.svg`, `top-project` → `/images/awards/best-project.svg`)
    - `quantity`, `unitType`: From spec data table
    - `prizeTiers`: Array — single entry for most categories, two entries for Signature 2025
 
@@ -224,13 +225,16 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 
 **Tasks**:
 1. **Create `src/components/awards/section-title.tsx`** (RSC):
-   - Subtitle: "Sun\* Annual Awards 2025" (24px, white)
-   - Title: "Hệ thống giải thưởng SAA 2025" (57px, gold #FFEA9E)
-   - Responsive: 57px → ~36px on mobile
-   - `text-left` alignment per design
+   - Structure follows Figma "Bìa" frame node 313:8453 — three children in order:
+     1. Subtitle `"Sun* Annual Awards 2025"` — Montserrat 24px/32px 700, white (#FFFFFF)
+     2. **Rectangle 26 divider** (node 313:8455) — 1px horizontal line, `bg-[#2E3940]`, `w-full h-px`
+     3. Title `"Hệ thống giải thưởng SAA 2025"` — Montserrat 57px 700, gold (#FFEA9E)
+   - Gap between children: `gap-4` (16px)
+   - **Positioning**: Per Figma, this block is overlaid at the bottom-left of the keyvisual hero area (Bìa frame). Implement as absolute overlay inside `<AwardKeyVisual>` with `absolute bottom-0 left-0 right-0 px-4 md:px-12 lg:px-36 pb-12` so title text appears over the keyvisual image.
+   - Responsive title: `text-3xl md:text-4xl lg:text-[57px]`
 
 2. **Create `src/components/awards/award-image.tsx`** (`"use client"`):
-   - Props: `src: string`, `alt: string`
+   - Props: `src: string`, `alt: string`, `name: string` (for fallback display), `priority?: boolean` (for LCP optimization on first 2 cards)
    - Wraps `next/image` (336×336px) with gold border, rounded-3xl, glow shadow, `mix-blend-mode: screen`
    - `onError` handler: on load failure, replace image with a fallback container showing the award name in gold text on dark bg, maintaining 336×336 dimensions
    - Responsive: `w-full max-w-[336px]` on mobile, fixed 336px on desktop
@@ -241,6 +245,7 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
    - Props: `category: AwardDetailCategory`, `index: number`
    - Alternating layout: `flex-row` (even index) / `flex-row-reverse` (odd index) on desktop; always `flex-col` (image above content) on mobile
    - Uses `<AwardImage>` for the image block
+   - **Multi-paragraph descriptions**: Signature 2025 and MVP descriptions contain two paragraphs separated by `\n\n`. Split `category.description` on `"\n\n"` and render each as a separate `<p>` element within a `flex-col gap-4` container.
    - Content block: 480px on desktop / full width on mobile, `backdrop-filter: blur(32px)`, gap-8, rounded-2xl
    - Inner structure:
      - Title row: `<Icon name="target" />` + award name (Montserrat 24px/32px 700, gold #FFEA9E)
@@ -311,9 +316,10 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
      - Label: "Phong trào ghi nhận" (Montserrat 24px/32px 700, white)
      - Title: "Sun\* Kudos" (Montserrat 57px 700, gold #FFEA9E, responsive: ~36px on mobile)
      - Description paragraph (Montserrat 16px/24px 700, white)
-     - "Chi tiết" button: `<Link href="/#kudos-heading">` (navigates to Homepage Kudos section), gold bg (#FFEA9E), dark text (#00101A), `<Icon name="arrow-right" />`, padding 16px, rounded-sm, hover: opacity 0.9, focus: outline 2px solid #FFEA9E
-   - **Right branding**:
-     - "KUDOS" text: SVN-Gotham 96px, #DBD1C1, `letter-spacing: -0.13em`. If SVN-Gotham unavailable, use Montserrat bold as fallback with reduced letter-spacing.
+     - "Chi tiết" button: `<Link href="/kudos">` (navigates to Sun\* Kudos Live Board, frame 2940:13431), gold bg (#FFEA9E), dark text (#00101A), `<Icon name="external-link" size={24} />` (diagonal arrow ↗ — add `public/icons/external-link.svg`), padding 16px, rounded-sm, hover: opacity 0.9, focus: outline 2px solid #FFEA9E
+   - **Right branding** (two stacked elements):
+     - Sun\* Kudos logo image (node I335:12023;313:8417): red "S\*" mark with "KUDOS" wordmark — render via `next/image` or `<Image>`. Asset must be available in `public/images/` (download from Figma).
+     - "KUDOS" decorative text: SVN-Gotham 96px/24px 400, #DBD1C1, `letter-spacing: -0.13em`. If SVN-Gotham unavailable, use Montserrat bold as fallback with reduced letter-spacing.
    - Responsive: Stack vertically on mobile, hide "KUDOS" text or reduce to 48px
 
 ---
@@ -333,7 +339,7 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 
 3. **Modify `src/components/footer/footer.tsx`** — Add `variant="saa"` with:
    - Layout: `flex justify-between items-center`, `border-top: 1px solid #2E3940`, `py-10 px-6 md:px-12 lg:px-[90px]`
-   - Left: Logo image (69×64) + nav links (flex, gap-12) — "About SAA 2025" (`/`), "Award Information" (`/awards`), "Sun\* Kudos" (`/#kudos-heading`), "Tiêu chuẩn chung" (`/standards`)
+   - Left: Logo image (69×64) + nav links (flex, gap-12) — "About SAA 2025" (`/`), "Award Information" (`/awards`), "Sun\* Kudos" (`/kudos`), "Tiêu chuẩn chung" (`/standards`)
    - Active link: Compare with `activeHref` prop → apply bg `rgba(255,234,158,0.1)`, gold text-shadow
    - Right: Copyright "Bản quyền thuộc về Sun\* © 2025" in Montserrat Alternates
    - Responsive: Stack vertically on mobile, center-align, hide logo on mobile
@@ -343,10 +349,11 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
    ```css
    html {
      scroll-behavior: smooth;       /* TR-005: native smooth scroll for anchor links */
-     scroll-padding-top: 64px;      /* FR-009: offset for fixed header (h-16 = 64px) */
+     scroll-padding-top: 64px;      /* FR-009: offset for fixed header (h-16 = 64px actual) */
    }
    ```
-   > **Why**: When a user navigates directly to `/awards#mvp`, the browser scrolls natively before React hydrates. Without `scroll-padding-top`, the target section is hidden behind the fixed 64px header. `scroll-behavior: smooth` provides native smooth scrolling for all anchor links, complementing the JS-based `scrollIntoView` in the sidebar.
+   > **Why**: When a user navigates directly to `/awards#mvp`, the browser scrolls natively before React hydrates. Without `scroll-padding-top`, the target section is hidden behind the fixed header.
+   > **Note on 64px vs 80px**: Spec TR-004 states 80px header clearance. The Header design spec shows 80px height, but the current implementation uses `h-16` (64px). `scroll-padding-top: 64px` and award card `scroll-mt-20` (80px = 5rem) are intentionally mismatched — `scroll-mt-20` provides slightly extra offset to account for section padding. If Header is updated to `h-20` (80px), both values should be changed to 80px.
 
 5. **Create `src/app/awards/page.tsx`** (RSC):
    ```tsx
@@ -364,7 +371,7 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
    const NAV_LINKS = [
      { label: "About SAA 2025", href: "/" },
      { label: "Award Information", href: "/awards" },
-     { label: "Sun* Kudos", href: "/#kudos-heading" },
+     { label: "Sun* Kudos", href: "/kudos" },  // navigates to Kudos Live Board per spec US6
    ];
 
    export default async function AwardsPage() {
@@ -398,7 +405,13 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
      );
    }
    ```
-   > **Note**: No `pt-16` on the content wrapper. Unlike Homepage (where `<KeyVisual>` is `absolute inset-0` and takes no flow space), `<AwardKeyVisual>` is in-flow (627px tall). Content naturally starts after the keyvisual. The fixed header overlays the keyvisual's top 64px, which is intentional (decorative banner).
+   > **Note**: Per the updated spec (design-style.md), the Section Title block is part of the Figma "Bìa" frame and must be **overlaid on the keyvisual** (not rendered as a separate section below it). `<SectionTitle>` should be moved inside `<AwardKeyVisual>` as an absolute-positioned overlay at the bottom-left. Update `<AwardKeyVisual>` to accept children and position them absolutely over the keyvisual image. The page assembly becomes:
+   > ```tsx
+   > <AwardKeyVisual>
+   >   <SectionTitle />
+   > </AwardKeyVisual>
+   > ```
+   > The `<div className="relative">` wrapper then only wraps `<AwardsSection>` and `<KudosPromo>`.
 
 6. **Responsive verification** at all 3 breakpoints:
    - Mobile (<768px): No sidebar, cards stacked vertically, section padding `px-4`, page title ~36px
@@ -502,13 +515,16 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 
 | Risk | Probability | Impact | Mitigation |
 |------|-------------|--------|------------|
-| Header/Footer modifications break Homepage | Medium | High | Changes are additive (new optional props `activeHref`, new Footer variant `"saa"`). Existing callers don't pass these props, so behavior is unchanged. Verify Homepage still renders correctly after modifications. |
+| Header/Footer modifications break Homepage | Medium | High | Changes are additive (new optional props `activeHref`, new Footer variant `"saa"`). Existing callers don't pass these props, so behavior is unchanged. Verify Homepage still renders correctly after modifications. **Status: Already implemented — `activeHref` and `variant="saa"` exist in both components.** |
 | `backdrop-filter: blur(32px)` browser support | Low | Medium | TailwindCSS `backdrop-blur-[32px]` has broad support (93%+ globally); fallback to `bg-navy/80` solid bg via `@supports not (backdrop-filter: blur(32px))` |
 | SVN-Gotham font unavailable | Medium | Low | Used only for "KUDOS" decorative text in promo section; fallback to Montserrat bold with tight letter-spacing |
 | Scroll-spy IntersectionObserver threshold tuning | Medium | Medium | Start with `rootMargin: "-64px 0px -50% 0px"` and `threshold: [0, 0.3]`; test with various scroll positions; adjust in E2E tests |
-| Award images not in Figma exports | Medium | Medium | Use placeholder colored rectangles (336×336, dark bg with gold border) during development; replace with final assets |
+| Award images are SVG (not PNG) with naming differences | Low | Low | Actual files use SVG format with naming differences (e.g., Top Project = `best-project.svg`, Top Project Leader = `culture-champion.svg`, Signature 2025 = `innovation.svg`). `award-data.ts` already references the correct paths. |
 | Sticky sidebar overlaps on smaller desktop screens (1024-1200px) | Low | Medium | Hide sidebar below `lg` breakpoint (1024px); show only on `lg:flex`. Content area takes full width when sidebar hidden. |
 | Header height mismatch (design 80px vs actual 64px) | Low | Low | Use actual header height (64px / `h-16`) for sidebar `top` offset. Design discrepancy is minor and does not affect functionality. Document for design team. |
+| SectionTitle is separate component, not overlaid on keyvisual | Medium | Medium | Per Figma "Bìa" frame, Section Title overlays the keyvisual bottom-left. Current implementation renders it as a separate flow section below keyvisual. Fix: integrate SectionTitle as an absolute-positioned child of AwardKeyVisual (see Phase 2). |
+| Kudos logo image asset missing | Medium | Medium | The Sun* Kudos branding image (red "S*" mark + wordmark) must be downloaded from Figma node I335:12023;313:8417. Without it, the Kudos section right side is incomplete. |
+| `external-link.svg` icon missing for Chi tiết button | Medium | Low | The design specifies a diagonal/external-link arrow (↗), but only `arrow-right.svg` exists. Either add `public/icons/external-link.svg` from Figma, or use `arrow-right.svg` as an accepted approximation. |
 
 ### Estimated Complexity
 
@@ -525,25 +541,42 @@ Build the Award System page — a long-form informational page presenting 6 SAA 
 - [x] `constitution.md` reviewed and understood
 - [x] `spec.md` approved
 - [x] `design-style.md` complete with all visual specifications
-- [ ] Award category images available (high-res 336×336)
-- [ ] Icons available: target, diamond, license, arrow-right
+- [x] Award category images available — SVG files already in `public/images/awards/`
+- [x] Icons available: `target.svg`, `diamond.svg`, `license.svg`, `arrow-right.svg` all in `public/icons/`
+- [ ] `external-link.svg` icon needed for Chi tiết button (↗ diagonal arrow)
+- [ ] Sun* Kudos branding image needed (download from Figma node I335:12023;313:8417)
 - [ ] Verify SVN-Gotham font availability
+
+### Implementation Status (as of plan review)
+
+> Most phases are already implemented. Remaining work:
+
+| Phase | Status | Remaining |
+|-------|--------|-----------|
+| Phase 0 (Assets) | Partial | Need `external-link.svg`, Kudos logo image |
+| Phase 1 (Types & Data) | Done | `AwardDetailCategory` type, `award-data.ts` complete |
+| Phase 2 (Award Cards) | Partial | `section-title.tsx` needs Rectangle 26 divider + overlay positioning inside `AwardKeyVisual` |
+| Phase 3 (Sidebar) | Done | `award-sidebar.tsx`, `awards-section.tsx` complete |
+| Phase 4 (Keyvisual & Kudos) | Partial | `award-keyvisual.tsx` done; `kudos-promo.tsx` needs: href `/kudos`, external-link icon, Kudos logo image |
+| Phase 5 (Page Assembly) | Partial | `page.tsx` done; fix `Sun* Kudos` nav href to `/kudos`; integrate SectionTitle into AwardKeyVisual |
+| Phase 6 (Polish) | Not started | Unit tests for `award-data.ts`, E2E tests |
 
 ### External Dependencies
 
 - Supabase Auth (already configured, no changes needed)
-- Figma asset export (award images, icons)
+- Figma asset export: `external-link.svg` icon, Kudos branding logo image
 
 ---
 
 ## Next Steps
 
-After plan approval:
+Remaining work after plan approval:
 
-1. **Run** `/momorph.tasks` to generate task breakdown
-2. **Review** tasks.md for parallelization opportunities
-3. **Begin** Phase 0 (asset preparation) — download images/icons from Figma
-4. **Begin** Phase 1 (types & data) in parallel with Phase 0
+1. **Fix SectionTitle**: Move it inside `<AwardKeyVisual>` as absolute overlay; add Rectangle 26 divider
+2. **Fix KudosPromo**: Update href to `/kudos`, swap to `external-link` icon, add Kudos logo image
+3. **Fix page.tsx**: Update `Sun* Kudos` nav href to `/kudos`
+4. **Download assets**: `external-link.svg` from Figma, Kudos branding logo image
+5. **Write tests**: Unit tests for `award-data.ts`, E2E for P1 user stories
 
 ---
 
