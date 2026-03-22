@@ -116,7 +116,7 @@ export default function KudosRulesPanel({
         aria-modal="true"
         aria-labelledby="kudos-rules-title"
         aria-hidden={!isOpen}
-        {...(!isOpen && { inert: "" as unknown as boolean })}
+        {...(!isOpen && { inert: true })}
         className={`fixed top-0 right-0 h-dvh z-50 w-full md:w-[480px] lg:w-[553px] bg-kudos-container-2 pt-4 px-5 pb-5 md:pt-6 md:px-10 md:pb-10 flex flex-col justify-between gap-10 transition-transform ${
           isOpen
             ? "translate-x-0 duration-200 ease-out"

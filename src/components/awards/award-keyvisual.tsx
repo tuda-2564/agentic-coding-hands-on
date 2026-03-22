@@ -9,12 +9,22 @@ export default function AwardKeyVisual({ children }: AwardKeyVisualProps) {
   return (
     <div className="relative w-full h-75 md:h-112.5 lg:h-156.75">
       <Image
-        src="/images/root-further.png"
+        src="/images/keyvisual-awards.png"
         alt=""
         fill
         priority
         className="object-cover"
       />
+      {/* ROOT FURTHER logo overlay (Figma node 2789:12915) */}
+      <div className="absolute top-12 md:top-16 lg:top-20 left-4 md:left-12 lg:left-36 z-10 pointer-events-none">
+        <Image
+          src="/images/root-further.png"
+          alt="Root Further"
+          width={338}
+          height={150}
+          className="w-40 md:w-56 lg:w-84.5 h-auto opacity-90"
+        />
+      </div>
       {/* Gradient overlay — fades to dark background at the bottom */}
       <div
         className="absolute inset-0 pointer-events-none"

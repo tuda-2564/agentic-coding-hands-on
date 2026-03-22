@@ -39,7 +39,15 @@
       "Bash(ls -la public/images/kudos/*.png)",
       "Bash(while read:*)",
       "Bash(do echo:*)",
-      "Bash(sed -i '' '/^export const runtime = \"\"\"\"edge\"\"\"\";$/d' \"$f\")"
+      "Bash(sed -i '' '/^export const runtime = \"\"\"\"edge\"\"\"\";$/d' \"$f\")",
+      "Bash(wc -l /Users/dao.anh.tu/agentic-coding-hands-on/.momorph/specs/313-8436-HeThongGiai/*.md)",
+      "mcp__momorph__get_figma_image",
+      "Bash(ls -la public/images/awards/*.png public/images/keyvisual-awards.png)",
+      "Read(//tmp/**)",
+      "Bash(kill 64388)",
+      "Bash(find /Users/dao.anh.tu/agentic-coding-hands-on/.momorph -name *.md)",
+      "Bash(grep -r \"imageSrc\\\\|/images/\" /Users/dao.anh.tu/agentic-coding-hands-on/src --include=*.ts --include=*.tsx)",
+      "Bash(file /Users/dao.anh.tu/agentic-coding-hands-on/public/images/kudos/icons/*.png)"
     ]
   },
   "enabledMcpjsonServers": [
