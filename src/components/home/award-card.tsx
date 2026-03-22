@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import type { AwardCategory } from "@/types/awards";
 import { formatVND } from "@/utils/format";

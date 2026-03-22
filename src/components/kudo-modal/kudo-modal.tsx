@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, RefObject } from "react";
+import { createPortal } from "react-dom";
 import Icon from "@/components/ui/icon";
 import RecipientSearch from "@/components/kudo-modal/recipient-search";
 import BadgeSelector from "@/components/kudo-modal/badge-selector";
@@ -109,7 +110,7 @@ export default function KudoModal({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-50 flex items-end md:items-center justify-center"
       style={{ backgroundColor: "rgba(0,13,20,0.7)" }}
@@ -265,6 +266,7 @@ export default function KudoModal({
           </div>
         </footer>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { useCountdown } from "@/hooks/use-countdown";
 
 type CountdownTimerProps = {
@@ -9,8 +10,33 @@ type CountdownTimerProps = {
 const LABELS = ["Ngày", "Giờ", "Phút", "Giây"];
 
 export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
-  const { days, hours, minutes, seconds, isExpired } =
-    useCountdown(targetDate);
+  const { days, hours, minutes, seconds, isExpired } = useCountdown(targetDate);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Show placeholder on server to avoid hydration mismatch (time changes between SSR and client)
+  if (!mounted) {
+    return (
+      <div role="timer" aria-live="polite" className="flex items-center justify-center gap-4">
+        {LABELS.map((label) => (
+          <div
+            key={label}
+            className="flex flex-col items-center gap-1 w-14 h-14 md:w-20 md:h-20 rounded-lg bg-countdown-bg border border-gold/30 justify-center"
+          >
+            <span className="text-xl md:text-[32px] font-bold text-white leading-6 md:leading-10 tabular-nums">
+              --
+            </span>
+            <span className="text-xs text-[#B0BEC5] uppercase tracking-[0.05em]">
+              {label}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (isExpired) {
     return (
@@ -36,9 +62,9 @@ export default function CountdownTimer({ targetDate }: CountdownTimerProps) {
       {values.map((value, i) => (
         <div
           key={LABELS[i]}
-          className="flex flex-col items-center gap-1 w-14 h-14 md:w-20 md:h-20 rounded-lg bg-countdown-bg border border-gold/30 justify-center motion-safe:transition-all"
+          className="flex flex-col items-center gap-1 w-14 h-14 md:w-20 md:h-20 rounded-lg bg-countdown-bg border border-gold/30 justify-center"
         >
-          <span className="text-[32px] font-bold text-white leading-10 tabular-nums">
+          <span className="text-xl md:text-[32px] font-bold text-white leading-6 md:leading-10 tabular-nums">
             {String(value).padStart(2, "0")}
           </span>
           <span className="text-xs text-[#B0BEC5] uppercase tracking-[0.05em]">
