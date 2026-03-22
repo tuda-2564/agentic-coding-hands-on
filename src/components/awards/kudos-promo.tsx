@@ -14,7 +14,7 @@ export default function KudosPromo() {
           <h2 className="text-kudos-gold font-bold text-3xl md:text-4xl lg:text-[57px] lg:leading-tight">
             Sun* Kudos
           </h2>
-          <p className="text-white font-bold text-sm lg:text-base leading-6 tracking-[0.5px]">
+          <p className="text-white font-bold text-sm lg:text-base leading-6 tracking-[0.5px] text-justify">
             ĐIỂM MỚI CỦA SAA 2025 Hoạt động ghi nhận và cảm ơn đồng nghiệp -
             lần đầu tiên được diễn ra dành cho tất cả Sunner. Hoạt động sẽ được
             triển khai vào tháng 11/2025, khuyến khích người Sun* chia sẻ những
@@ -24,7 +24,7 @@ export default function KudosPromo() {
           </p>
           <Link
             href="/kudos"
-            className="inline-flex items-center gap-1 bg-kudos-gold text-navy font-bold text-base leading-6 px-4 py-4 rounded w-fit hover:opacity-90 transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-kudos-gold focus-visible:outline-offset-2 min-h-11"
+            className="inline-flex items-center gap-1 bg-kudos-gold text-navy font-bold text-base leading-6 p-4 rounded-sm w-fit hover:opacity-90 transition-opacity duration-150 focus-visible:outline-2 focus-visible:outline-kudos-gold focus-visible:outline-offset-2 min-h-11"
           >
             Chi tiết
             <Icon name="external-link" size={24} />

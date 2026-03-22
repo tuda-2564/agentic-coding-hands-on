@@ -2,16 +2,19 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/libs/supabase/server";
 import Header from "@/components/header/header";
 import Footer from "@/components/footer/footer";
-import AwardKeyVisual from "@/components/awards/award-keyvisual";
-import SectionTitle from "@/components/awards/section-title";
-import AwardsSection from "@/components/awards/awards-section";
-import KudosPromo from "@/components/awards/kudos-promo";
+import KeyVisual from "@/components/home/key-visual";
+import HeroSection from "@/components/home/hero-section";
+import CampaignInfo from "@/components/home/campaign-info";
+import AwardsGrid from "@/components/home/awards-grid";
+import KudosSection from "@/components/home/kudos-section";
 import ScrollReveal from "@/components/ui/scroll-reveal";
-import { AWARD_CATEGORIES } from "@/utils/award-data";
+import { getActiveCampaign } from "@/services/campaign";
+import { getAwardCategories } from "@/services/awards";
+import { getRecentKudos } from "@/services/kudos";
 
 const NAV_LINKS = [
   { label: "About SAA 2025", href: "/" },
-  { label: "Award Information", href: "#awards" },
+  { label: "Award Information", href: "/awards" },
   { label: "Sun* Kudos", href: "/kudos" },
 ];
 
@@ -25,11 +28,15 @@ export default async function HomePage() {
     redirect("/login");
   }
 
+  const [campaign, categories, kudos] = await Promise.all([
+    getActiveCampaign(),
+    getAwardCategories(),
+    getRecentKudos(20),
+  ]);
+
   return (
     <main className="relative min-h-screen bg-navy overflow-hidden">
-      <AwardKeyVisual>
-        <SectionTitle />
-      </AwardKeyVisual>
+      <KeyVisual />
       <Header
         variant="app"
         navLinks={NAV_LINKS}
@@ -39,12 +46,18 @@ export default async function HomePage() {
           avatar_url: user.user_metadata?.avatar_url,
         }}
       />
-      <div className="relative">
+      <div className="relative pt-16">
+        <HeroSection campaign={campaign} />
+        {campaign && (
+          <ScrollReveal>
+            <CampaignInfo campaign={campaign} />
+          </ScrollReveal>
+        )}
         <ScrollReveal>
-          <AwardsSection categories={AWARD_CATEGORIES} />
+          <AwardsGrid categories={categories} />
         </ScrollReveal>
         <ScrollReveal>
-          <KudosPromo />
+          <KudosSection initialKudos={kudos} />
         </ScrollReveal>
       </div>
       <Footer variant="saa" activeHref="/" />

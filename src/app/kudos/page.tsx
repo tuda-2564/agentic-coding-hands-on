@@ -76,22 +76,29 @@ export default async function KudosPage() {
           avatar_url: userMeta.avatar_url,
         }}
       />
-      <div id="kudos-content" className="pt-20 flex flex-col gap-[120px] pb-[120px]">
-        <KudosKeyvisual />
-        <div className="flex justify-center">
-          <KudosRulesWrapper />
+      <div id="kudos-content" className="flex flex-col pb-[120px]">
+        {/* Top area: keyvisual + rules + action bar (tightly spaced) */}
+        <div className="flex flex-col gap-10">
+          <KudosKeyvisual />
+          <div className="flex justify-center">
+            <KudosRulesWrapper />
+          </div>
+          <ActionBarWrapper />
         </div>
-        <ActionBarWrapper />
-        <HighlightSection initialHighlights={highlights} />
-        <SpotlightSection
-          total={spotlight.total}
-          entries={spotlight.entries}
-        />
-        <AllKudosSection
-          initialKudos={feedResult.kudos}
-          initialCursor={feedResult.nextCursor}
-          sidebar={sidebar}
-        />
+
+        {/* Main sections with 120px gaps */}
+        <div className="flex flex-col gap-[120px] mt-[120px]">
+          <HighlightSection initialHighlights={highlights} />
+          <SpotlightSection
+            total={spotlight.total}
+            entries={spotlight.entries}
+          />
+          <AllKudosSection
+            initialKudos={feedResult.kudos}
+            initialCursor={feedResult.nextCursor}
+            sidebar={sidebar}
+          />
+        </div>
       </div>
       <Footer variant="saa" activeHref="/kudos" />
     </main>

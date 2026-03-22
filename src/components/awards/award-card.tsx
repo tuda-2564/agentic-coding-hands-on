@@ -14,7 +14,7 @@ export default function AwardCard({ category, index }: AwardCardProps) {
   return (
     <article id={category.id} className="scroll-mt-20">
       <div
-        className={`flex flex-col gap-8 lg:gap-10 ${
+        className={`flex flex-col gap-10 ${
           isImageLeft ? "lg:flex-row" : "lg:flex-row-reverse"
         } lg:items-start`}
       >
@@ -25,7 +25,7 @@ export default function AwardCard({ category, index }: AwardCardProps) {
           priority={index < 2}
         />
 
-        <div className="w-full lg:w-120 flex flex-col gap-8 rounded-2xl backdrop-blur-[32px] supports-[not(backdrop-filter:blur(32px))]:bg-navy/80">
+        <div className="w-full lg:w-120 flex flex-col gap-8 rounded-2xl backdrop-blur-[32px]">
           <div className="flex items-center gap-4">
             <Icon name="target" size={24} className="shrink-0" />
             <h3 className="text-kudos-gold font-bold text-xl lg:text-2xl leading-8">

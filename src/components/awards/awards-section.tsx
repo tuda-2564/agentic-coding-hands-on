@@ -17,12 +17,12 @@ export default function AwardsSection({ categories }: AwardsSectionProps) {
       <div className="flex flex-row gap-10">
         <AwardSidebar categories={sidebarCategories} />
 
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col gap-20">
           {categories.map((category, index) => (
-            <div key={category.id}>
+            <div key={category.id} className="flex flex-col gap-20">
               <AwardCard category={category} index={index} />
               {index < categories.length - 1 && (
-                <div className="h-px bg-[#2E3940] my-8 lg:my-10" />
+                <div className="h-px bg-kudos-divider" />
               )}
             </div>
           ))}

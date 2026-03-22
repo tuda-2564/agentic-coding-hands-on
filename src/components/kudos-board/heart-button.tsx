@@ -36,13 +36,13 @@ export default function HeartButton({
           <Icon
             name="heart"
             size={20}
-            className={liked ? "" : "opacity-40 grayscale"}
+            className={liked ? "" : "grayscale opacity-50"}
             alt={liked ? "Liked" : "Not liked"}
           />
         </span>
         <span
           className={`text-base font-bold ${
-            liked ? "text-kudos-heart" : "text-[#00101A]"
+            liked ? "text-kudos-heart" : "text-navy"
           }`}
         >
           {formatHeartCount(heartCount)}

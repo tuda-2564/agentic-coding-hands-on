@@ -65,7 +65,7 @@ export default function HighlightCard({
           <Icon
             name="heart"
             size={20}
-            className={kudo.is_liked_by_me ? "" : "opacity-40 grayscale"}
+            className={kudo.is_liked_by_me ? "" : "grayscale opacity-50"}
           />
           <span className="text-sm font-bold text-[#00101A]">
             {formatHeartCount(kudo.heart_count)}
