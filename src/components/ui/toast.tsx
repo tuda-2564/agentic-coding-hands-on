@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 type ToastProps = {
   message: string;
@@ -9,16 +10,22 @@ type ToastProps = {
 };
 
 export default function Toast({ message, type, onDismiss }: ToastProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   useEffect(() => {
     const timer = setTimeout(onDismiss, 4000);
     return () => clearTimeout(timer);
   }, [onDismiss]);
 
-  return (
+  const toast = (
     <div
       role="alert"
       aria-live="polite"
-      className={`fixed top-4 right-4 z-50 flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg text-sm font-medium text-white max-w-sm animate-in slide-in-from-top-2 duration-200 ${
+      className={`fixed top-4 right-4 z-[9999] flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg text-sm font-medium text-white max-w-sm animate-fade-in ${
         type === "success"
           ? "bg-surface-card border-gold"
           : "bg-surface-card border-[#EF4444]"
@@ -40,4 +47,7 @@ export default function Toast({ message, type, onDismiss }: ToastProps) {
       </button>
     </div>
   );
+
+  if (!mounted) return null;
+  return createPortal(toast, document.body);
 }

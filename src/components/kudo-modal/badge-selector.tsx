@@ -97,7 +97,7 @@ export default function BadgeSelector({
     >
       {badgeList.length === 0 ? (
         <p className="px-3 py-3 text-sm text-[#6B8A9A] text-center">
-          Đang tải...
+          {hasFetched ? "Không có danh hiệu nào" : "Đang tải..."}
         </p>
       ) : (
         badgeList.map((badge) => {
@@ -109,13 +109,13 @@ export default function BadgeSelector({
               role="option"
               aria-selected={isSelected}
               onClick={() => handleSelect(badge)}
-              className={`w-full flex items-center gap-2.5 h-11 px-3 text-left text-[13px] font-semibold transition-colors ${
+              className={`w-full flex items-center gap-2.5 h-11 px-3 text-left text-[13px] font-semibold transition-colors cursor-pointer ${
                 isSelected
                   ? "bg-gold/15 text-gold"
                   : "text-white hover:bg-gold/10"
               }`}
             >
-              {badge.icon_url && (
+              {badge.icon_url ? (
                 <Image
                   src={badge.icon_url}
                   alt={badge.name}
@@ -123,6 +123,10 @@ export default function BadgeSelector({
                   height={24}
                   className="rounded border border-gold/40 shrink-0"
                 />
+              ) : (
+                <span className="w-6 h-6 rounded border border-gold/40 bg-gold/10 flex items-center justify-center text-xs font-bold text-gold shrink-0">
+                  {badge.name.charAt(0)}
+                </span>
               )}
               <span className="truncate">{badge.name}</span>
             </button>
@@ -154,7 +158,7 @@ export default function BadgeSelector({
       >
         {selectedBadge ? (
           <span className="flex items-center gap-2.5">
-            {selectedBadge.icon_url && (
+            {selectedBadge.icon_url ? (
               <Image
                 src={selectedBadge.icon_url}
                 alt={selectedBadge.name}
@@ -162,6 +166,10 @@ export default function BadgeSelector({
                 height={24}
                 className="rounded border border-gold/40"
               />
+            ) : (
+              <span className="w-6 h-6 rounded border border-gold/40 bg-gold/10 flex items-center justify-center text-xs font-bold text-gold shrink-0">
+                {selectedBadge.name.charAt(0)}
+              </span>
             )}
             <span className="text-[13px] font-semibold text-white">
               {selectedBadge.name}
